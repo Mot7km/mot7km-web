@@ -1,0 +1,44 @@
+{
+  "home": {
+    "title": "Welcome to MOT7KM",
+    "description": "A scalable, modern web application built with Next.js, Tailwind CSS, and i18n support",
+    "getStarted": "Get Started",
+    "features": "Features",
+    "documentation": "Documentation",
+    "featuresSubtitle": "Everything you need to build scalable applications",
+    "cta": {
+      "title": "Ready to get started?",
+      "description": "Start building your scalable application today",
+      "button": "Get Started Now"
+    },
+    "featuresCards": {
+      "fast": {
+        "title": "Fast & Modern",
+        "description": "Built with Next.js 16 for optimal performance"
+      },
+      "ui": {
+        "title": "Beautiful UI",
+        "description": "Tailwind CSS with light and dark themes"
+      },
+      "i18n": {
+        "title": "Multi-Language",
+        "description": "i18n support for global reach (EN, AR)"
+      },
+      "scalable": {
+        "title": "Scalable Architecture",
+        "description": "Well-organized codebase ready to grow"
+      }
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "features": "Features",
+    "contact": "Contact"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

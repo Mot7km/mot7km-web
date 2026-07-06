@@ -1,0 +1,74 @@
+import type { Metadata } from "next";
+import { Cairo, Inter } from "next/font/google";
+import { notFound } from "next/navigation";
+import { getMessages } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { Providers } from "@/components/providers";
+import { Header } from "@/components/layouts/Header";
+import { Footer } from "@/components/layouts/Footer";
+import { i18n } from "@/config/i18n";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+});
+
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "MOT7KM - Modern Web Application",
+  description: "A scalable, modern web application built with Next.js and Tailwind CSS",
+};
+
+interface RootLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
+  children,
+  params,
+}: RootLayoutProps) {
+  const { locale } = await params;
+
+  if (!i18n.locales.includes(locale as any)) {
+    notFound();
+  }
+
+  const isRTL = locale === 'ar';
+
+  const messages = await getMessages({ locale });
+
+  return (
+    <html
+      lang={locale}
+      dir={isRTL ? "rtl" : "ltr"}
+      className={`${inter.variable} ${cairo.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body
+        className="flex min-h-full flex-col bg-white text-gray-900 dark:bg-black dark:text-gray-50"
+        style={{ fontFamily: isRTL ? "var(--font-cairo)" : "var(--font-inter)" }}
+      >
+        <NextIntlClientProvider messages={messages}>
+          <Providers>
+            <Header />
+            <main className="flex flex-1 flex-col">
+              {children}
+            </main>
+            <Footer />
+          </Providers>
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}

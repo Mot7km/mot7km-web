@@ -1,0 +1,44 @@
+{
+  "home": {
+    "title": "مرحبًا بك في MOT7KM",
+    "description": "تطبيق ويب حديث وقابل للتوسع مبني باستخدام Next.js و Tailwind CSS ودعم الترجمة",
+    "getStarted": "ابدأ الآن",
+    "features": "المميزات",
+    "documentation": "الوثائق",
+    "featuresSubtitle": "كل ما تحتاجه لبناء تطبيقات قابلة للتوسع",
+    "cta": {
+      "title": "هل أنت جاهز للبدء؟",
+      "description": "ابدأ في بناء تطبيقك اليوم",
+      "button": "ابدأ الآن"
+    },
+    "featuresCards": {
+      "fast": {
+        "title": "سريع وحديث",
+        "description": "مبني على Next.js 16 لتحقيق أداء ممتاز"
+      },
+      "ui": {
+        "title": "واجهة جميلة",
+        "description": "Tailwind CSS مع ثيمات فاتحة ومظلمة"
+      },
+      "i18n": {
+        "title": "متعدد اللغات",
+        "description": "دعم الترجمة للوصول العالمي (EN, AR)"
+      },
+      "scalable": {
+        "title": "هندسة قابلة للتوسع",
+        "description": "قاعدة كود منظمة وجاهزة للنمو"
+      }
+    }
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "about": "حول",
+    "features": "المميزات",
+    "contact": "التواصل"
+  },
+  "theme": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  }
+}
