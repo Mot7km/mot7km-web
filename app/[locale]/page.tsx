@@ -30,7 +30,7 @@ export default function Home() {
       if (!matchesCategory) {
         return false;
       }
-
+      
       if (!normalizedQuery) {
         return true;
       }
@@ -64,7 +64,7 @@ export default function Home() {
       </section>
 
       {/* CATEGORIES */}
-      <section className="w-full bg-[var(--color-background)] px-4 pt-12 sm:px-6 lg:px-8">
+      <section className="w-full bg-[var(--color-background)] px-4  sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl flex-col justify-center items-center">
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
           <Categories categories={categories} activeCategory={activeCategory} onChange={setActiveCategory} />
