@@ -6,9 +6,18 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { useEffect, useState } from 'react';
 import { promoCards, PromoCardData } from '@/data/menupromo';
+import { usePathname } from 'next/navigation'; // 👈 used to detect RTL
 
-//Carousel
+// -------------------------------------------------------------------
+// Main Carousel
+// -------------------------------------------------------------------
 export function PromotionalCarousel() {
+  // ----- Detect RTL from the URL path -----
+  // Replace this logic with your own i18n detection if needed.
+  // For example: useRouter().locale, useLocale() from next-intl, etc.
+  const pathname = usePathname();
+  const isRTL = pathname?.startsWith('/ar') ?? false; // adjust locale code as needed
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -16,16 +25,18 @@ export function PromotionalCarousel() {
       align: 'center',
       containScroll: 'trimSnaps',
       dragFree: false,
+      direction: isRTL ? 'rtl' : 'ltr', // 👈 key fix for RTL
     },
     [Autoplay({ delay: 2000, stopOnInteraction: true })]
   );
 
+  // Update dots on slide change
   useEffect(() => {
     if (!emblaApi) return;
 
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
     emblaApi.on('select', onSelect);
-    onSelect();
+    onSelect(); // initialise
 
     return () => {
       emblaApi.off('select', onSelect);
@@ -40,7 +51,11 @@ export function PromotionalCarousel() {
     <section className="w-full overflow-hidden">
       <div className="relative">
         <div className="px-4 sm:px-6 md:px-8">
-          <div className="overflow-hidden" ref={emblaRef}>
+          <div
+            className="overflow-hidden"
+            ref={emblaRef}
+            dir={isRTL ? 'rtl' : 'ltr'} // ensures correct flex direction
+          >
             <div className="flex">
               {promoCards.map((card) => (
                 <div
@@ -54,6 +69,7 @@ export function PromotionalCarousel() {
           </div>
         </div>
 
+        {/* Dots */}
         <div className="mt-4 flex justify-center gap-2">
           {promoCards.map((_, index) => (
             <button
@@ -73,7 +89,9 @@ export function PromotionalCarousel() {
   );
 }
 
-// Individual Promo Card component
+// -------------------------------------------------------------------
+// Individual Promo Card
+// -------------------------------------------------------------------
 function PromoCard({
   title,
   description,
@@ -87,9 +105,9 @@ function PromoCard({
 }: PromoCardData) {
   return (
     <div
-      className="relative h-[192px] w-full overflow-hidden rounded-xl shadow-[0px_0px_0px_1px_rgba(227,191,178,0.2),0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)]"
+      className="relative h-[192px] w-full overflow-hidden rounded-xl border border-[var(--color-border)] shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-4px_rgba(0,0,0,0.1)]"
       style={{
-        background: image ? undefined : '#A0F399',
+        background: image ? undefined : 'var(--color-surface)',
       }}
     >
       {image && (
@@ -110,7 +128,7 @@ function PromoCard({
 
       {hasIcon && (
         <div className="absolute bottom-0 right-0 opacity-20">
-          <Coffee className="h-24 w-24 text-[#217128]" />
+          <Coffee className="h-24 w-24 text-[var(--color-primary)]" />
         </div>
       )}
 

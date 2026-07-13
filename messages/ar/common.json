@@ -1,44 +1,54 @@
 {
-  "home": {
-    "title": "مرحبًا بك في MOT7KM",
-    "description": "تطبيق ويب حديث وقابل للتوسع مبني باستخدام Next.js و Tailwind CSS ودعم الترجمة",
-    "getStarted": "ابدأ الآن",
-    "features": "المميزات",
-    "documentation": "الوثائق",
-    "featuresSubtitle": "كل ما تحتاجه لبناء تطبيقات قابلة للتوسع",
-    "cta": {
-      "title": "هل أنت جاهز للبدء؟",
-      "description": "ابدأ في بناء تطبيقك اليوم",
-      "button": "ابدأ الآن"
-    },
-    "featuresCards": {
-      "fast": {
-        "title": "سريع وحديث",
-        "description": "مبني على Next.js 16 لتحقيق أداء ممتاز"
-      },
-      "ui": {
-        "title": "واجهة جميلة",
-        "description": "Tailwind CSS مع ثيمات فاتحة ومظلمة"
-      },
-      "i18n": {
-        "title": "متعدد اللغات",
-        "description": "دعم الترجمة للوصول العالمي (EN, AR)"
-      },
-      "scalable": {
-        "title": "هندسة قابلة للتوسع",
-        "description": "قاعدة كود منظمة وجاهزة للنمو"
-      }
+  "common": {
+    "all": "الكل",
+    "brandName": "مطبخ الذواقة",
+    "time": {
+      "justNow": "الآن",
+      "yesterday": "أمس",
+      "minutesAgo": "منذ {count} دقائق",
+      "hoursAgo": "منذ {count} ساعات",
+      "daysAgo": "منذ {count} أيام",
+      "monthsAgo": "منذ {count} أشهر",
+      "yearsAgo": "منذ {count} سنوات"
     }
   },
-  "nav": {
-    "home": "الرئيسية",
-    "about": "حول",
-    "features": "المميزات",
-    "contact": "التواصل"
+  "home": {
+    "specialOffers": "عروض خاصة",
+    "bestSeller": "الأكثر مبيعاً",
+    "exploreItems": "استكشف المنتجات"
   },
-  "theme": {
-    "light": "فاتح",
-    "dark": "داكن",
-    "system": "النظام"
+  "header": {
+    "tagline": "نكهات فاخرة، تُوصّل إليك"
+  },
+  "footer": {
+    "aboutUs": "من نحن",
+    "termsOfService": "شروط الخدمة",
+    "contactSupport": "اتصل بالدعم",
+    "copyrightText": "© {year} {brand}. مدعوم من {provider}"
+  },
+  "productList": {
+    "noProducts": "لا توجد منتجات تطابق هذا البحث في الفئة المحددة.",
+    "viewMore": "عرض المزيد",
+    "thatsIt": "هذا كل شيء!",
+    "countOf": "{count} من {total}"
+  },
+  "search": {
+    "placeholder": "ابحث عن أطباق فاخرة..."
+  },
+  "productPage": {
+    "backToMenu": "العودة إلى القائمة",
+    "ingredients": "المكونات"
+  },
+  "customization": {
+    "title": "تخصيص"
+  },
+  "languages": {
+    "en": "EN",
+    "ar": "AR"
+  },
+  "reviews": {
+    "title": "التقييمات",
+    "noReviews": "لا توجد تقييمات حتى الآن.",
+    "viewMore": "عرض المزيد"
   }
 }

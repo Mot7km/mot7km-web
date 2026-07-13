@@ -9,7 +9,7 @@ export interface PromoCardData {
   textColor: string;
   badgeColor?: string;
   badgeBg?: string;
-  hasIcon?: boolean;       // ✅ instead of storing JSX
+  hasIcon?: boolean;  
 }
 
 export const promoCards: PromoCardData[] = [
@@ -45,6 +45,6 @@ export const promoCards: PromoCardData[] = [
     textColor: 'text-[#217128]',
     badgeColor: 'text-[#217128]',
     badgeBg: 'transparent',
-    hasIcon: true,         // ✅ flag to show the coffee icon
+    hasIcon: true,     
   },
 ];

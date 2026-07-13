@@ -1,6 +1,8 @@
 import { Utensils } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function Footer() {
+  const t = useTranslations();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -9,8 +11,8 @@ export function Footer() {
         <div className="flex flex-col items-center text-center">
           {/* Brand Name */}
           <div className="flex items-center gap-2 text-xl font-bold text-[var(--color-text-primary)]">
+            {t('common.brandName')}   {/* <-- changed */}
             <Utensils strokeWidth={3} className="h-6 w-6 text-[var(--color-primary)]" />
-            The Gourmet Kitchen
           </div>
 
           {/* Navigation Links */}
@@ -19,28 +21,29 @@ export function Footer() {
               href="#"
               className="text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-primary)]"
             >
-              About Us
+              {t('footer.aboutUs')}
             </a>
             <a
               href="#"
               className="text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-primary)]"
             >
-              Terms of Service
+              {t('footer.termsOfService')}
             </a>
             <a
               href="#"
               className="text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-primary)]"
             >
-              Contact Support
+              {t('footer.contactSupport')}
             </a>
           </div>
 
           {/* Copyright & Powering */}
           <div className="mt-4 text-sm text-[var(--color-text-muted)]">
-            © {currentYear} The Gourmet Kitchen. Powered by{' '}
-            <span className="font-semibold text-[var(--color-primary)]">
-              Mot7km
-            </span>
+            {t('footer.copyrightText', {
+              year: currentYear,
+              brand: t('common.brandName'),   // <-- changed
+              provider: 'Mot7km'
+            })}
           </div>
         </div>
       </div>

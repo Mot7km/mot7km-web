@@ -1,10 +1,11 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { i18n } from '@/config/i18n';
 
 export function LanguageSwitcher() {
+  const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
@@ -23,8 +24,11 @@ export function LanguageSwitcher() {
   };
 
   const switchLocale = (newLocale: string) => {
+    if (newLocale === locale) return;
+
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax; Secure`;
     router.push(getLocalizedPath(newLocale));
+    router.refresh(); // <-- forces Next.js to drop the cached RSC payload for the shared [locale] layout and re-render Header/Footer/page with the new locale
   };
 
   const segments = pathname.split('/').filter(Boolean);
@@ -36,6 +40,7 @@ export function LanguageSwitcher() {
     <div className="flex items-center gap-1 p-1 bg-[var(--color-surface)] rounded-full border border-[var(--color-border)] shadow-sm">
       {i18n.locales.map((loc) => {
         const isActive = currentLocale === loc;
+        const label = loc === 'en' ? t('languages.en') : t('languages.ar');
         return (
           <button
             key={loc}
@@ -53,7 +58,7 @@ export function LanguageSwitcher() {
               }
             `}
           >
-            {loc === 'en' ? 'EN' : 'AR'}
+            {label}
           </button>
         );
       })}

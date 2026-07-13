@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Product, computeTotalPrice } from '@/data/menu';
 
 interface CustomizationOptionsProps {
@@ -9,6 +10,8 @@ interface CustomizationOptionsProps {
 }
 
 export function CustomizationOptions({ product, onPriceChange }: CustomizationOptionsProps) {
+  const t = useTranslations();
+
   const getDefaultSelections = (): Record<string, string> => {
     const defaults: Record<string, string> = {};
     if (product.customizationOptions) {
@@ -73,7 +76,7 @@ export function CustomizationOptions({ product, onPriceChange }: CustomizationOp
       {/* Header: title + extra cost (if any) */}
       <div className="flex items-center justify-between">
         <h3 className="font-montserrat font-semibold text-xl leading-7 text-[var(--color-text-primary)]">
-          Customization
+          {t('customization.title')}
         </h3>
         {hasExtras && (
           <span className="text-sm font-medium text-[var(--color-primary)]">

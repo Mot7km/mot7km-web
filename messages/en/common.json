@@ -1,44 +1,54 @@
 {
-  "home": {
-    "title": "Welcome to MOT7KM",
-    "description": "A scalable, modern web application built with Next.js, Tailwind CSS, and i18n support",
-    "getStarted": "Get Started",
-    "features": "Features",
-    "documentation": "Documentation",
-    "featuresSubtitle": "Everything you need to build scalable applications",
-    "cta": {
-      "title": "Ready to get started?",
-      "description": "Start building your scalable application today",
-      "button": "Get Started Now"
-    },
-    "featuresCards": {
-      "fast": {
-        "title": "Fast & Modern",
-        "description": "Built with Next.js 16 for optimal performance"
-      },
-      "ui": {
-        "title": "Beautiful UI",
-        "description": "Tailwind CSS with light and dark themes"
-      },
-      "i18n": {
-        "title": "Multi-Language",
-        "description": "i18n support for global reach (EN, AR)"
-      },
-      "scalable": {
-        "title": "Scalable Architecture",
-        "description": "Well-organized codebase ready to grow"
-      }
+  "common": {
+    "all": "All",
+    "brandName": "The Gourmet Kitchen",
+    "time": {
+      "justNow": "just now",
+      "yesterday": "yesterday",
+      "minutesAgo": "{count} minutes ago",
+      "hoursAgo": "{count} hours ago",
+      "daysAgo": "{count} days ago",
+      "monthsAgo": "{count} months ago",
+      "yearsAgo": "{count} years ago"
     }
   },
-  "nav": {
-    "home": "Home",
-    "about": "About",
-    "features": "Features",
-    "contact": "Contact"
+  "home": {
+    "specialOffers": "Special Offers",
+    "bestSeller": "Best Seller",
+    "exploreItems": "Explore Items"
   },
-  "theme": {
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
+  "header": {
+    "tagline": "Premium Flavors, Delivered"
+  },
+  "footer": {
+    "aboutUs": "About Us",
+    "termsOfService": "Terms of Service",
+    "contactSupport": "Contact Support",
+    "copyrightText": "© {year} {brand}. Powered by {provider}"
+  },
+  "productList": {
+    "noProducts": "No products match this search in the selected category.",
+    "viewMore": "View More",
+    "thatsIt": "That’s it!",
+    "countOf": "{count} of {total}"
+  },
+  "search": {
+    "placeholder": "Search for premium dishes..."
+  },
+  "productPage": {
+    "backToMenu": "Back to menu",
+    "ingredients": "Ingredients"
+  },
+  "customization": {
+    "title": "Customization"
+  },
+  "languages": {
+    "en": "EN",
+    "ar": "AR"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "noReviews": "No reviews yet.",
+    "viewMore": "View More"
   }
 }
