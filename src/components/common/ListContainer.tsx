@@ -1,11 +1,10 @@
 'use client';
 
 import { Product, Review } from '@/data/menu';
-import FeaturedSection from '../modules/FeaturedSection';
 import ProductSection from '../modules/ProductSection';
 import ReviewSection from '../modules/ReviewSection';
 
-export type SectionType = 'featured' | 'products' | 'reviews';
+export type SectionType = 'products' | 'reviews';
 
 export interface SectionConfig {
   type: SectionType;
@@ -27,17 +26,6 @@ export default function ListContainer({ sections = [] }: ListContainerProps) {
     <div className="flex flex-col gap-8 w-full">
       {sections.map((section, index) => {
         switch (section.type) {
-          case 'featured':
-            return (
-              <FeaturedSection
-                key={index}
-                title={section.title}
-                products={section.data as Product[]}
-                initialCount={section.initialCount}
-                loadMoreCount={section.loadMoreCount}
-                showCount={section.showCount}
-              />
-            );
           case 'products':
             return (
               <ProductSection

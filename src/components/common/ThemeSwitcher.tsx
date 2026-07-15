@@ -45,7 +45,7 @@ export function ThemeSwitcher() {
   };
 
   return (
-    <div className="flex items-center gap-1 p-1 bg-[var(--color-surface)] rounded-full border border-[var(--color-border)] shadow-sm">
+    <div className="flex items-center gap-0.5 p-1 rounded-full glass-subtle">
       {[
         { mode: 'light', icon: Sun, label: 'Light' },
         { mode: 'dark', icon: Moon, label: 'Dark' },
@@ -61,20 +61,21 @@ export function ThemeSwitcher() {
             }}
             className={`
               relative flex items-center justify-center
-              w-9 h-9 rounded-full
-              transition-all duration-200 ease-out
+              w-8 h-8 rounded-full
+              transition-all duration-250 ease-out
               hover:scale-105 active:scale-95
               cursor-pointer
               ${
                 active
-                  ? 'bg-[var(--color-primary)] text-[var(--color-text-on-primary)] shadow-[var(--color-primary)]/30'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
+                  ? 'text-[var(--color-text-on-primary)] shadow-md'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-white/20 dark:hover:bg-white/10'
               }
             `}
+            style={active ? { background: 'var(--gradient-primary)' } : undefined}
             title={label}
             aria-label={label}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-3.5 w-3.5" />
           </button>
         );
       })}

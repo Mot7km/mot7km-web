@@ -28,7 +28,7 @@ export function LanguageSwitcher() {
 
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax; Secure`;
     router.push(getLocalizedPath(newLocale));
-    router.refresh(); // <-- forces Next.js to drop the cached RSC payload for the shared [locale] layout and re-render Header/Footer/page with the new locale
+    router.refresh(); // forces Next.js to drop the cached RSC payload for the shared [locale] layout and re-render Header/Footer/page with the new locale
   };
 
   const segments = pathname.split('/').filter(Boolean);
@@ -37,7 +37,7 @@ export function LanguageSwitcher() {
     : locale;
 
   return (
-    <div className="flex items-center gap-1 p-1 bg-[var(--color-surface)] rounded-full border border-[var(--color-border)] shadow-sm">
+    <div className="flex items-center gap-0.5 p-1 rounded-full glass-subtle">
       {i18n.locales.map((loc) => {
         const isActive = currentLocale === loc;
         const label = loc === 'en' ? t('languages.en') : t('languages.ar');
@@ -47,17 +47,18 @@ export function LanguageSwitcher() {
             onClick={() => switchLocale(loc)}
             className={`
               relative flex items-center justify-center
-              min-w-9 h-9 px-3 rounded-full
-              text-sm font-medium
-              transition-all duration-200 ease-out
+              min-w-8 h-8 px-2.5 rounded-full
+              text-xs font-semibold
+              transition-all duration-250 ease-out
               hover:scale-105 active:scale-95
               cursor-pointer
               ${
                 isActive
-                  ? 'bg-[var(--color-primary)] text-[var(--color-text-on-primary)] shadow-[var(--color-primary)]/30'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
+                  ? 'text-[var(--color-text-on-primary)] shadow-md'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-white/20 dark:hover:bg-white/10'
               }
             `}
+            style={isActive ? { background: 'var(--gradient-primary)' } : undefined}
           >
             {label}
           </button>

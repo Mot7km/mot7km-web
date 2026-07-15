@@ -9,9 +9,9 @@ import { ViewMoreButton, ThatsIt } from '@/components/ui/ViewMore';
 interface ProductSectionProps {
   title?: string;
   products: Product[];
-  initialCount?: number;      // default 4
-  loadMoreCount?: number;     // default 4
-  showCount?: boolean;        // default true
+  initialCount?: number;
+  loadMoreCount?: number;
+  showCount?: boolean;
 }
 
 export default function ProductSection({
@@ -49,12 +49,15 @@ export default function ProductSection({
     <section className="flex flex-col gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
       {/* Header */}
       <div className="flex sm:flex-row sm:items-center justify-between gap-2">
-        <h2 className="font-montserrat font-semibold text-2xl leading-8 text-[var(--color-text-primary)]">
+        <h2
+          className="accent-line font-bold text-2xl leading-8 text-[var(--color-text-primary)]"
+          style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}
+        >
           {sectionTitle}
         </h2>
         <div className="flex items-center gap-3">
           {showCount && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--color-accent)]/10 text-xs font-medium text-[var(--color-accent-dark)] border border-[var(--color-accent)]/20">
+            <span className="badge-count">
               {t('productList.countOf', { count: visibleItems.length, total: products.length })}
             </span>
           )}
@@ -66,10 +69,8 @@ export default function ProductSection({
         {visibleItems.map((product, index) => (
           <div
             key={product.id}
-            className="w-full transition-all duration-300 ease-out transform hover:scale-[1.03] hover:shadow-lg hover:shadow-[var(--color-primary)]/5"
-            style={{
-              animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
-            }}
+            className="w-full animate-fade-in-up"
+            style={{ animationDelay: `${index * 0.05}s` }}
           >
             <ProductCard product={product} />
           </div>
@@ -86,20 +87,6 @@ export default function ProductSection({
         />
         {!hasMore && products.length > 0 && <ThatsIt />}
       </div>
-
-      {/* Animation keyframes – include in global CSS or use a <style> tag */}
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(12px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </section>
   );
 }

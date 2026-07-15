@@ -46,9 +46,36 @@
     "en": "EN",
     "ar": "AR"
   },
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
   "reviews": {
     "title": "التقييمات",
     "noReviews": "لا توجد تقييمات حتى الآن.",
     "viewMore": "عرض المزيد"
+  },
+  "trustBadges": {
+    "fastDelivery": "توصيل سريع",
+    "premiumQuality": "جودة ممتازة",
+    "securePayment": "دفع آمن",
+    "support": "دعم 24/7"
+  },
+  "flashSale": {
+    "title": "عرض اليوم",
+    "endsIn": "ينتهي في"
+  },
+  "newsletter": {
+    "title": "اشترك في نشرتنا البريدية",
+    "subtitle": "احصل على خصم 10% على طلبك الأول!",
+    "placeholder": "أدخل بريدك الإلكتروني",
+    "button": "اشترك الآن"
+  },
+  "productCard": {
+    "addToCart": "أضف للسلة"
   }
 }
