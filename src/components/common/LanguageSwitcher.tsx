@@ -51,6 +51,7 @@ export function LanguageSwitcher() {
               text-sm font-medium
               transition-all duration-200 ease-out
               hover:scale-105 active:scale-95
+              cursor-pointer
               ${
                 isActive
                   ? 'bg-[var(--color-primary)] text-[var(--color-text-on-primary)] shadow-[var(--color-primary)]/30'

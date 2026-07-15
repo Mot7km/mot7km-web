@@ -64,6 +64,7 @@ export function ThemeSwitcher() {
               w-9 h-9 rounded-full
               transition-all duration-200 ease-out
               hover:scale-105 active:scale-95
+              cursor-pointer
               ${
                 active
                   ? 'bg-[var(--color-primary)] text-[var(--color-text-on-primary)] shadow-[var(--color-primary)]/30'

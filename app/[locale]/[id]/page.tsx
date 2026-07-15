@@ -115,16 +115,12 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
               </div>
             )}
 
-            <hr className="border-[var(--color-border-strong)] my-2" />
-
             {/* CUSTOMIZATION */}
             {product.customizationOptions && product.customizationOptions.length > 0 && (
               <div className="space-y-4">
                 <CustomizationOptions product={product} />
               </div>
             )}
-
-            <hr className="border-[var(--color-border-strong)] my-2" />
 
             {/* REVIEWS */}
             {reviewSections.length > 0 && (

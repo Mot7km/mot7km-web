@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { Star } from 'lucide-react';
 import { Product } from '@/data/menu';
 import { useLocale } from '@/hooks/useLocale';
 
@@ -17,37 +18,47 @@ export function FeaturedCard({ product }: FeaturedCardProps) {
     <Link
       href={href}
       prefetch={false}
-      className="flex-1 w-full
+      className="group flex flex-col w-full min-h-[340px]
         bg-[var(--color-surface)] rounded-xl
-        shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_4px_20px_rgba(0,0,0,0.06)]
-        overflow-hidden h-[340px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
+        border border-[var(--color-border)]
+        shadow-sm hover:shadow-xl hover:shadow-[var(--color-primary)]/5
+        hover:border-[var(--color-primary)] hover:scale-[1.01]
+        transition-all duration-300 ease-out
+        active:scale-[0.98]
+        overflow-hidden"
     >
-      <div className="w-full h-[192px] bg-[var(--color-card-light)] relative">
-        <Image src={product.image} alt={product.name} fill className="object-cover" />
+      {/* Image container */}
+      <div className="relative w-full h-48 bg-[var(--color-card-light)] dark:bg-[var(--color-card-dark)] overflow-hidden flex-shrink-0">
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       </div>
-      <div className="p-4 flex flex-col justify-between h-[148px]">
-        <div>
-          <h3 className="font-montserrat font-semibold text-xl leading-7 text-[var(--color-text-primary)]">
-            {product.name}
-          </h3>
-          <p className="text-sm font-normal leading-5 text-[var(--color-text-secondary)] mt-1 line-clamp-2">
-            {product.description}
-          </p>
-        </div>
-        <div className="flex justify-between items-center">
+
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-4 gap-1 min-h-[148px]">
+        <h3 className="font-montserrat font-semibold text-xl leading-7 text-[var(--color-text-primary)] line-clamp-1">
+          {product.name}
+        </h3>
+        <p className="text-sm font-normal leading-5 text-[var(--color-text-muted)] line-clamp-2 flex-1">
+          {product.description}
+        </p>
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--color-border)]">
           <span className="font-montserrat font-bold text-lg leading-6 text-[var(--color-primary)]">
             {product.price}
           </span>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <span className="font-inter font-semibold text-sm leading-5 text-[var(--color-text-primary)]">
               {product.rating}
             </span>
-            <svg width="16.67" height="15.83" viewBox="0 0 17 16" fill="none">
-              <path
-                d="M8.335 0L10.267 5.147L16.67 5.882L11.67 10.529L12.677 16.765L8.335 14.118L3.993 16.765L5 10.529L0 5.882L6.403 5.147L8.335 0Z"
-                fill="var(--color-primary)"
-              />
-            </svg>
+            <Star
+              size={16}
+              className="text-[var(--color-warning)] fill-[var(--color-warning)]"
+              strokeWidth={2}
+            />
           </div>
         </div>
       </div>
@@ -67,25 +78,35 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link
       href={href}
       prefetch={false}
-      className="flex-1 min-w-[160px] max-w-[280px] sm:max-w-[300px] md:max-w-[240px] lg:max-w-[280px] xl:max-w-[320px]
+      className="group flex flex-col w-full min-h-[240px]
         bg-[var(--color-surface)] rounded-xl
-        shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)]
-        overflow-hidden hover:shadow-md transition-shadow
-        flex flex-col h-60 sm:h-64"
+        border border-[var(--color-border)]
+        shadow-sm hover:shadow-lg hover:shadow-[var(--color-primary)]/5
+        hover:border-[var(--color-primary)] hover:scale-[1.02]
+        transition-all duration-300 ease-out
+        active:scale-[0.98]
+        overflow-hidden"
     >
-      <div className="relative w-full flex-1 bg-[var(--color-card-light)]">
-        <Image src={product.image} alt={product.name} fill className="object-cover" />
+      {/* Image container */}
+      <div className="relative w-full h-40 bg-[var(--color-card-light)] dark:bg-[var(--color-card-dark)] overflow-hidden flex-shrink-0">
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        />
       </div>
-      <div className="p-3 flex flex-col justify-between flex-shrink-0">
-        <div>
-          <h4 className="font-montserrat font-semibold text-base leading-6 text-[var(--color-text-primary)] line-clamp-1">
-            {product.name}
-          </h4>
-          <p className="text-xs text-[var(--color-text-secondary)] mt-1 line-clamp-2">
-            {product.description}
-          </p>
-        </div>
-        <div className="flex justify-between items-center mt-2">
+
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-3 gap-0.5">
+        <h4 className="font-montserrat font-semibold text-base leading-6 text-[var(--color-text-primary)] line-clamp-1">
+          {product.name}
+        </h4>
+        <p className="text-xs leading-4 text-[var(--color-text-muted)] line-clamp-2 flex-1">
+          {product.description}
+        </p>
+        <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-[var(--color-border)]">
           <span className="font-montserrat font-bold text-sm text-[var(--color-primary)]">
             {product.price}
           </span>
@@ -93,12 +114,11 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-sm font-medium text-[var(--color-text-primary)]">
               {product.rating}
             </span>
-            <svg width="14" height="14" viewBox="0 0 17 16" fill="none">
-              <path
-                d="M8.335 0L10.267 5.147L16.67 5.882L11.67 10.529L12.677 16.765L8.335 14.118L3.993 16.765L5 10.529L0 5.882L6.403 5.147L8.335 0Z"
-                fill="var(--color-primary)"
-              />
-            </svg>
+            <Star
+              size={14}
+              className="text-[var(--color-warning)] fill-[var(--color-warning)]"
+              strokeWidth={2}
+            />
           </div>
         </div>
       </div>

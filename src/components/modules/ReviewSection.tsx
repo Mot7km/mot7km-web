@@ -32,56 +32,97 @@ export default function ReviewSection({
     setVisibleCount(Math.min(visibleCount + loadMoreCount, reviews.length));
   };
 
-  // Average rating
   const avgRating = reviews.length
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : null;
   const avgNum = avgRating ? parseFloat(avgRating) : 0;
   const filledStars = Math.round(avgNum);
 
-  if (!reviews.length) return null;
+  if (!reviews.length) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-[var(--color-text-muted)]">
+        <p className="text-sm">{t('reviews.empty') || 'No reviews yet'}</p>
+      </div>
+    );
+  }
 
   const sectionTitle = title || t('reviews.title');
 
   return (
-    <section className="flex flex-col gap-4 w-full">
-      <div className="flex justify-between items-center w-full">
-        <h3 className="font-montserrat font-semibold text-xl leading-7 text-[var(--color-text-primary)]">
+    <section className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
+      {/* Header – responsive layout */}
+      <div className="flex flex-row items-center justify-between gap-2 sm:gap-4 border-b border-[var(--color-border)] py-2 sm:py-3">
+        {/* Title – shrinks and truncates instead of pushing content */}
+        <h2 className="font-montserrat font-semibold text-base sm:text-xl md:text-2xl leading-6 sm:leading-8 text-[var(--color-text-primary)] truncate min-w-0 flex-1">
           {sectionTitle}
-        </h3>
-        <div className="flex items-center gap-2">
-          <span className="font-montserrat font-bold text-3xl leading-10 tracking-[-0.64px] text-[var(--color-primary)]">
-            {avgRating}
-          </span>
-          <div className="flex items-center gap-0.5">
-            {Array.from({ length: 5 }, (_, i) => (
-              <svg
-                key={i}
-                width="20"
-                height="19"
-                viewBox="0 0 16 16"
-                fill={i < filledStars ? 'var(--color-primary)' : 'var(--color-text-muted)'}
-              >
-                <path d="M8 0L9.796 5.527L15.608 5.527L10.906 8.944L12.702 14.472L8 11.056L3.298 14.472L5.094 8.944L0.392 5.527L6.204 5.527L8 0Z" />
-              </svg>
-            ))}
+        </h2>
+
+        {/* Right side – stays inline, shrinks as needed */}
+        <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-3 flex-shrink-0">
+          {/* Rating + Stars */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <span className="font-montserrat font-bold text-xl sm:text-2xl md:text-3xl leading-7 sm:leading-10 tracking-[-0.64px] text-[var(--color-text-primary)]">
+              {avgRating}
+            </span>
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: 5 }, (_, i) => (
+                <svg
+                  key={i}
+                  width={14}
+                  height={13}
+                  viewBox="0 0 20 20"
+                  className="sm:w-4 sm:h-4 md:w-5 md:h-5 text-[var(--color-warning)] min-w-[12px] min-h-[12px]"
+                  fill={i < filledStars ? 'var(--color-warning)' : 'var(--color-border)'}
+                >
+                  <path
+                    d="M10 0L12.653 6.202L19.511 6.955L14.232 11.872L15.706 18.798L10 15.6L4.294 18.798L5.768 11.872L0.489 6.955L7.347 6.202L10 0Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Reviews Grid */}
       <div className="flex flex-col gap-4 w-full">
-        {visibleItems.map((review) => (
-          <ReviewCard key={review.reviewer + review.date} review={review} />
+        {visibleItems.map((review, index) => (
+          <div
+            key={review.reviewer + review.date}
+            className="w-full transition-all duration-300 ease-out transform hover:scale-[1.01] hover:shadow-md"
+            style={{
+              animation: `fadeInUp 0.4s ease-out ${index * 0.08}s both`,
+            }}
+          >
+            <ReviewCard review={review} />
+          </div>
         ))}
       </div>
 
-      <ViewMoreButton
-        onClick={handleLoadMore}
-        hasMore={hasMore}
-        label={t('reviews.viewMore')}
-        variant={1}
-      />
-      {!hasMore && reviews.length > 0 && <ThatsIt />}
+      {/* View More / ThatsIt */}
+      <div className="flex flex-col items-center gap-3 pt-2">
+        <ViewMoreButton
+          onClick={handleLoadMore}
+          hasMore={hasMore}
+          label={t('reviews.viewMore')}
+          variant={1}
+        />
+        {!hasMore && reviews.length > 0 && <ThatsIt />}
+      </div>
+
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </section>
   );
 }

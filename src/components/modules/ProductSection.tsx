@@ -34,37 +34,72 @@ export default function ProductSection({
     setVisibleCount(Math.min(visibleCount + loadMoreCount, products.length));
   };
 
-  if (!products.length) return null;
+  // Empty state
+  if (!products.length) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-[var(--color-text-muted)]">
+        <p className="text-sm">{t('productList.empty') || 'No products available'}</p>
+      </div>
+    );
+  }
 
   const sectionTitle = title || t('productList.menu');
 
   return (
-    <section className="flex flex-col gap-4 w-full">
-      <div className="flex items-center justify-between w-full">
-        <h2 className="font-montserrat font-semibold text-xl leading-7 text-[var(--color-text-primary)]">
+    <section className="flex flex-col gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
+      {/* Header */}
+      <div className="flex sm:flex-row sm:items-center justify-between gap-2">
+        <h2 className="font-montserrat font-semibold text-2xl leading-8 text-[var(--color-text-primary)]">
           {sectionTitle}
         </h2>
-        {showCount && (
-          <span className="text-xs text-[var(--color-text-muted)] opacity-60">
-            {t('productList.countOf', { count: visibleItems.length, total: products.length })}
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          {showCount && (
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--color-accent)]/10 text-xs font-medium text-[var(--color-accent-dark)] border border-[var(--color-accent)]/20">
+              {t('productList.countOf', { count: visibleItems.length, total: products.length })}
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Grid container – replaces flex-wrap */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
-        {visibleItems.map((product) => (
-          <ProductCard key={product.id} product={product} />
+      {/* Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
+        {visibleItems.map((product, index) => (
+          <div
+            key={product.id}
+            className="w-full transition-all duration-300 ease-out transform hover:scale-[1.03] hover:shadow-lg hover:shadow-[var(--color-primary)]/5"
+            style={{
+              animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
+            }}
+          >
+            <ProductCard product={product} />
+          </div>
         ))}
       </div>
 
-      <ViewMoreButton
-        onClick={handleLoadMore}
-        hasMore={hasMore}
-        label={t('productList.viewMore')}
-        variant={0}
-      />
-      {!hasMore && products.length > 0 && <ThatsIt />}
+      {/* View More / ThatsIt */}
+      <div className="flex flex-col items-center gap-3 pt-2">
+        <ViewMoreButton
+          onClick={handleLoadMore}
+          hasMore={hasMore}
+          label={t('productList.viewMore')}
+          variant={0}
+        />
+        {!hasMore && products.length > 0 && <ThatsIt />}
+      </div>
+
+      {/* Animation keyframes – include in global CSS or use a <style> tag */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </section>
   );
 }

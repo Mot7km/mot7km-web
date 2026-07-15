@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Product, computeTotalPrice } from '@/data/menu';
+import { Settings } from 'lucide-react';
 
 interface CustomizationOptionsProps {
   product: Product;
@@ -65,40 +66,51 @@ export function CustomizationOptions({ product, onPriceChange }: CustomizationOp
 
   const isYesNoOption = (option: typeof product.customizationOptions[0]) => {
     if (option.choices.length !== 2) return false;
-    const labels = option.choices.map(c => c.label.toLowerCase());
+    const labels = option.choices.map(c => c.label.trim().toLowerCase());
     return labels.includes('yes') && labels.includes('no');
   };
 
   const hasExtras = extraTotal > 0;
 
   return (
-    <div>
-      {/* Header: title + extra cost (if any) */}
-      <div className="flex items-center justify-between">
-        <h3 className="font-montserrat font-semibold text-xl leading-7 text-[var(--color-text-primary)]">
-          {t('customization.title')}
-        </h3>
+    <div className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-sm overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-border)] bg-[var(--color-card-light)] dark:bg-[var(--color-card-dark)]">
+        <div className="flex items-center gap-2">
+          <Settings className="w-5 h-5 text-[var(--color-text-muted)]" />
+          <h3 className="font-montserrat font-semibold text-lg leading-6 text-[var(--color-text-primary)]">
+            {t('customization.title')}
+          </h3>
+        </div>
         {hasExtras && (
-          <span className="text-sm font-medium text-[var(--color-primary)]">
-            + ${extraTotal.toFixed(2)}
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--color-primary)]/10 text-sm font-medium text-[var(--color-primary)] border border-[var(--color-primary)]/20">
+            +${extraTotal.toFixed(2)}
           </span>
         )}
       </div>
 
-      <div className="space-y-3 mt-4">
+      {/* Options */}
+      <div className="p-5 space-y-4">
         {product.customizationOptions.map((option) => {
           const isYesNo = isYesNoOption(option);
           const currentSelection = selections[option.name];
 
           if (isYesNo) {
-            const isChecked = currentSelection === 'Yes';
-            const yesChoice = option.choices.find(c => c.label.toLowerCase() === 'yes');
-            const extraPrice = yesChoice ? yesChoice.extraPrice : 0;
+            const yesChoice = option.choices.find(c => c.label.trim().toLowerCase() === 'yes')!;
+            const noChoice = option.choices.find(c => c.label.trim().toLowerCase() === 'no')!;
+            const isChecked = currentSelection?.trim().toLowerCase() === 'yes';
+            const extraPrice = isChecked ? yesChoice.extraPrice : 0;
+
+            const toggleYesNo = () => {
+              const newLabel = isChecked ? noChoice.label : yesChoice.label;
+              handleSelect(option.name, newLabel);
+            };
 
             return (
               <label
                 key={option.name}
-                className="flex items-center justify-between bg-[var(--color-surface)] border border-[var(--color-border-strong)] rounded-xl px-4 py-3 cursor-pointer"
+                className="flex items-center justify-between bg-[var(--color-card-light)] dark:bg-[var(--color-card-dark)] rounded-xl px-4 py-3 transition-colors hover:bg-[var(--color-border)]/30 cursor-pointer"
+                onClick={toggleYesNo}
               >
                 <span className="text-sm font-medium text-[var(--color-text-primary)]">
                   {option.name}
@@ -109,15 +121,25 @@ export function CustomizationOptions({ product, onPriceChange }: CustomizationOp
                       +${extraPrice.toFixed(2)}
                     </span>
                   )}
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => {
-                      const newChoice = isChecked ? 'No' : 'Yes';
-                      handleSelect(option.name, newChoice);
-                    }}
-                    className="w-5 h-5 rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] focus:ring-2 focus:ring-offset-2 transition"
-                  />
+                  {/* Styled Checkbox */}
+                  <div className="relative flex items-center justify-center w-6 h-6">
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => {}} // handled by label onClick
+                      className="w-5 h-5 rounded border-2 border-[var(--color-border)] 
+                        checked:border-[var(--color-primary)] 
+                        checked:bg-[var(--color-primary)]
+                        focus:ring-2 focus:ring-[var(--color-primary)]/50 focus:ring-offset-2
+                        transition-all duration-200
+                        cursor-pointer
+                        [appearance:none] relative
+                        checked:after:content-['✓'] checked:after:text-white checked:after:absolute 
+                        checked:after:top-1/2 checked:after:left-1/2 checked:after:-translate-x-1/2 checked:after:-translate-y-1/2
+                        checked:after:text-sm checked:after:font-bold
+                      "
+                    />
+                  </div>
                 </div>
               </label>
             );
@@ -127,7 +149,7 @@ export function CustomizationOptions({ product, onPriceChange }: CustomizationOp
           return (
             <div
               key={option.name}
-              className="bg-[var(--color-surface)] border border-[var(--color-border-strong)] rounded-xl px-4 py-3 space-y-1"
+              className="bg-[var(--color-card-light)] dark:bg-[var(--color-card-dark)] rounded-xl px-4 py-3 space-y-1"
             >
               <span className="text-sm font-medium text-[var(--color-text-primary)]">
                 {option.name}
