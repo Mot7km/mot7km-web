@@ -6,7 +6,6 @@ import { PromotionalCarousel } from '@/components/features/PromotionalCarousel';
 import Categories from '@/components/features/PromotionalCategories';
 import ListContainer from '@/components/common/ListContainer';
 import SearchBar from '@/components/common/SearchBar';
-import { TrustBadges } from '@/components/features/TrustBadges';
 import { NewsletterSection } from '@/components/features/NewsletterSection';
 import { allProducts } from '@/data/menu';
 
@@ -67,8 +66,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      {/* ─────── TRUST BADGES ─────── */}
-      <TrustBadges />
       {/* ─────── PROMOTIONAL CAROUSEL ─────── */}
       <section className="section-glow relative w-full px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
@@ -85,23 +82,29 @@ export default function Home() {
       {/* ─────── GRADIENT DIVIDER ─────── */}
       <div className="section-divider w-full max-w-3xl mx-auto" />
 
-      {/* ─────── CATEGORIES & SEARCH ─────── */}
-      <section className="w-full px-4 pt-6 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl flex-col justify-center items-center">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
-          <Categories categories={categories} activeCategory={activeCategory} onSelectCategory={setActiveCategory} />
-        </div>
-      </section>
-
-      {/* ─────── PRODUCT SECTIONS ─────── */}
+      {/* ─────── STICKY SEARCH + CATEGORIES + PRODUCT LIST ─────── */}
       <section className="section-glow relative w-full px-4 pb-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
-          <ListContainer sections={sections} />
+          <div className="relative">
+            {/* Sticky Search Bar (only search stays sticky) */}
+            <div className="sticky top-0 z-10 py-3 md:py-4">
+              <SearchBar value={searchQuery} onChange={setSearchQuery} />
+            </div>
+
+            {/* Categories – placed right below search, centered */}
+            <div className="flex w-full justify-center py-4">
+              <Categories
+                categories={categories}
+                activeCategory={activeCategory}
+                onSelectCategory={setActiveCategory}
+              />
+            </div>
+
+            {/* Product list */}
+            <ListContainer sections={sections} />
+          </div>
         </div>
       </section>
-
-      {/* ─────── NEWSLETTER ─────── */}
-      <NewsletterSection />
     </div>
   );
 }
