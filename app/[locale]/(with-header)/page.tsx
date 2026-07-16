@@ -85,18 +85,16 @@ export default function Home() {
       <section className="section-glow relative w-full px-4 pb-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
           <div className="relative">
-            {/* Sticky Search Bar (only search stays sticky) */}
-            <div className="sticky top-0 z-10 py-3 md:py-4">
+            {/* Combined sticky container for SearchBar and Categories */}
+            <div className="sticky top-0 z-10 bg-[var(--color-background)] py-3 md:py-4">
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
-            </div>
-
-            {/* Categories – placed right below search, centered */}
-            <div className="flex w-full justify-center py-4">
-              <Categories
-                categories={categories}
-                activeCategory={activeCategory}
-                onSelectCategory={setActiveCategory}
-              />
+              <div className="flex w-full justify-center py-4">
+                <Categories
+                  categories={categories}
+                  activeCategory={activeCategory}
+                  onSelectCategory={setActiveCategory}
+                />
+              </div>
             </div>
 
             {/* Product list */}

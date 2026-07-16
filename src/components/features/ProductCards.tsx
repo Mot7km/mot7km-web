@@ -18,7 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link
       href={href}
       prefetch={false}
-      className="group flex flex-col w-full min-h-[260px]
+      className="group flex flex-col w-full max-h-[260px]
         bg-[var(--color-surface)] rounded-xl
         border border-[var(--color-border)]
         overflow-hidden
@@ -36,7 +36,7 @@ export function ProductCard({ product }: ProductCardProps) {
       }}
     >
       {/* Image container */}
-      <div className="relative w-full h-40 bg-[var(--color-card-light)] dark:bg-[var(--color-card-dark)] overflow-hidden flex-shrink-0">
+      <div className="relative w-full h-30 bg-[var(--color-card-light)] dark:bg-[var(--color-card-dark)] overflow-hidden flex-shrink-0">
         <Image
           src={product.image}
           alt={product.name}
