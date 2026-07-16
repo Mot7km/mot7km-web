@@ -77,5 +77,10 @@
   },
   "productCard": {
     "addToCart": "Add to Cart"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+    "goHome": "Go back home"
   }
 }

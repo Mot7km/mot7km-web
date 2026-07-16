@@ -6,7 +6,6 @@ import { PromotionalCarousel } from '@/components/features/PromotionalCarousel';
 import Categories from '@/components/features/PromotionalCategories';
 import ListContainer from '@/components/common/ListContainer';
 import SearchBar from '@/components/common/SearchBar';
-import { NewsletterSection } from '@/components/features/NewsletterSection';
 import { allProducts } from '@/data/menu';
 
 export default function Home() {

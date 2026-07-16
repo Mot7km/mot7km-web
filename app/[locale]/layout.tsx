@@ -4,8 +4,6 @@ import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Providers } from "@/components/providers";
-import { Header } from "@/components/layouts/Header";
-import { Footer } from "@/components/layouts/Footer";
 import { i18n } from "@/config/i18n";
 
 const inter = Inter({
@@ -41,7 +39,7 @@ export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ locale }));
 }
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: RootLayoutProps) {
@@ -52,7 +50,6 @@ export default async function RootLayout({
   }
 
   const isRTL = locale === 'ar';
-
   const messages = await getMessages({ locale });
 
   return (
@@ -68,11 +65,7 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <Header />
-            <main className="flex flex-1 flex-col">
-              {children}
-            </main>
-            <Footer />
+            {children} 
           </Providers>
         </NextIntlClientProvider>
       </body>
