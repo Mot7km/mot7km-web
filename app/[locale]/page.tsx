@@ -6,6 +6,7 @@ import { PromotionalCarousel } from '@/components/features/PromotionalCarousel';
 import Categories from '@/components/features/PromotionalCategories';
 import ListContainer from '@/components/common/ListContainer';
 import SearchBar from '@/components/common/SearchBar';
+import { NewsletterSection } from '@/components/features/NewsletterSection';
 import { allProducts } from '@/data/menu';
 
 export default function Home() {
@@ -18,8 +19,15 @@ export default function Home() {
       new Set(allProducts.map((product) => product.category).filter(Boolean) as string[]),
     );
     return [
-      { id: 'All', label: t('common.all') },
-      ...derivedCategories.map((category) => ({ id: category, label: category })),
+      { id: 'All', label: t('common.all'), image: 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=200&q=80' },
+      ...derivedCategories.map((category) => {
+        const firstProduct = allProducts.find(p => p.category === category);
+        return {
+          id: category,
+          label: category,
+          image: firstProduct?.image || 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=200&q=80'
+        };
+      }),
     ];
   }, [t]);
 
@@ -42,57 +50,59 @@ export default function Home() {
     });
   }, [activeCategory, normalizedQuery]);
 
-  const featuredProducts = filteredProducts.filter((product) => product.featured);
-  const gridProducts = filteredProducts.filter((product) => !product.featured);
-
   // Build sections for ListContainer
   const sections = useMemo(() => {
     const result = [];
-    if (featuredProducts.length > 0) {
-      result.push({
-        type: 'featured' as const,
-        title: t('home.bestSeller'),
-        data: featuredProducts,
-      initialCount: 1,
-      loadMoreCount: 1,
-      showCount: true,
-      });
-    }
     result.push({
       type: 'products' as const,
       title: t('home.exploreItems'),
-      data: gridProducts,
-      initialCount: 4,
+      data: filteredProducts,
+      initialCount: 8,
       loadMoreCount: 4,
       showCount: true,
     });
     return result;
-  }, [featuredProducts, gridProducts, t]);
+  }, [filteredProducts, t]);
 
   return (
     <div className="flex flex-col items-center justify-center">
-      {/* PROMOTIONAL CAROUSEL */}
-      <section className="w-full border-b border-[var(--color-border)] bg-[var(--color-background)] px-4 py-12 sm:px-6 lg:px-8">
+      {/* ─────── PROMOTIONAL CAROUSEL ─────── */}
+      <section className="section-glow relative w-full px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
-          <h2 className="mb-6 text-2xl font-bold text-[var(--color-text-primary)]">
+          <h2
+            className="accent-line mb-6 text-2xl font-bold text-[var(--color-text-primary)] sm:text-3xl"
+            style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}
+          >
             {t('home.specialOffers')}
           </h2>
           <PromotionalCarousel />
         </div>
       </section>
 
-      {/* CATEGORIES & SEARCH */}
-      <section className="w-full bg-[var(--color-background)] px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl flex-col justify-center items-center">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
-          <Categories categories={categories} activeCategory={activeCategory} onChange={setActiveCategory} />
-        </div>
-      </section>
+      {/* ─────── GRADIENT DIVIDER ─────── */}
+      <div className="section-divider w-full max-w-3xl mx-auto" />
 
-      {/* PRODUCT SECTIONS */}
-      <section className="w-full bg-[var(--color-background)] px-4 sm:px-6 lg:px-8 mb-4">
+      {/* ─────── STICKY SEARCH + CATEGORIES + PRODUCT LIST ─────── */}
+      <section className="section-glow relative w-full px-4 pb-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
-          <ListContainer sections={sections} />
+          <div className="relative">
+            {/* Sticky Search Bar (only search stays sticky) */}
+            <div className="sticky top-0 z-10 py-3 md:py-4">
+              <SearchBar value={searchQuery} onChange={setSearchQuery} />
+            </div>
+
+            {/* Categories – placed right below search, centered */}
+            <div className="flex w-full justify-center py-4">
+              <Categories
+                categories={categories}
+                activeCategory={activeCategory}
+                onSelectCategory={setActiveCategory}
+              />
+            </div>
+
+            {/* Product list */}
+            <ListContainer sections={sections} />
+          </div>
         </div>
       </section>
     </div>

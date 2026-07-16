@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cairo, Inter } from "next/font/google";
+import { Cairo, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
@@ -20,9 +20,16 @@ const cairo = Cairo({
   display: "swap",
 });
 
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-display",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
 export const metadata: Metadata = {
-  title: "MOT7KM - Modern Web Application",
-  description: "A scalable, modern web application built with Next.js and Tailwind CSS",
+  title: "MOT7KM — Smart Restaurant Solutions",
+  description: "A modern SaaS platform for restaurants: QR menus, POS, and ERP — all in one place.",
 };
 
 interface RootLayoutProps {
@@ -52,11 +59,11 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={isRTL ? "rtl" : "ltr"}
-      className={`${inter.variable} ${cairo.variable} h-full antialiased`}
+      className={`${inter.variable} ${cairo.variable} ${plusJakarta.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body
-        className="flex min-h-full flex-col bg-white text-gray-900 dark:bg-black dark:text-gray-50"
+        className="flex min-h-full flex-col bg-[var(--color-background)] text-[var(--color-text-primary)] transition-colors duration-300"
         style={{ fontFamily: isRTL ? "var(--font-cairo)" : "var(--font-inter)" }}
       >
         <NextIntlClientProvider messages={messages}>

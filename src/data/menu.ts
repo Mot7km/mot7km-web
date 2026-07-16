@@ -39,7 +39,7 @@ export const allProducts: Product[] = [
     description: 'A refreshing blend of ripe avocados, spinach, green apple, and a hint of lime. Packed with vitamins and antioxidants.',
     price: '$9.50',
     rating: '4.9',
-    image: 'https://picsum.photos/seed/avocado-smoothie/350/192',
+    image: 'https://images.unsplash.com/photo-1623065422900-058292211624?w=500&q=80',
     featured: true,
     category: 'Smoothies',
     ingredients: ['Avocado', 'Spinach', 'Green Apple', 'Lime', 'Coconut Water'],
@@ -89,7 +89,7 @@ export const allProducts: Product[] = [
     description: 'Juicy 100% Angus beef patty with cheddar, lettuce, tomato, and our secret sauce.',
     price: '$8.50',
     rating: '4.9',
-    image: 'https://picsum.photos/seed/burger-classic/169/127',
+    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80',
     category: 'Burgers',
     ingredients: ['Angus Beef Patty', 'Cheddar Cheese', 'Lettuce', 'Tomato', 'Secret Sauce', 'Brioche Bun'],
     customizationOptions: [
@@ -139,7 +139,7 @@ export const allProducts: Product[] = [
     price: '$7.20',
     rating: '4.8',
     featured: true,
-    image: 'https://picsum.photos/seed/berry-fusion/169/127',
+    image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=500&q=80',
     category: 'Smoothies',
     ingredients: ['Blueberries', 'Strawberries', 'Raspberries', 'Banana', 'Almond Milk'],
     customizationOptions: [
@@ -171,7 +171,7 @@ export const allProducts: Product[] = [
     description: 'Mango, pineapple, coconut milk, and a squeeze of lime – a taste of the islands.',
     price: '$8.00',
     rating: '4.7',
-    image: 'https://picsum.photos/seed/mango-blast/169/127',
+    image: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500&q=80',
     category: 'Smoothies',
     ingredients: ['Mango', 'Pineapple', 'Coconut Milk', 'Lime'],
     customizationOptions: [
@@ -203,7 +203,7 @@ export const allProducts: Product[] = [
     description: 'Two beef patties, crispy bacon, pepper jack cheese, caramelized onions, and BBQ sauce.',
     price: '$11.90',
     rating: '4.8',
-    image: 'https://picsum.photos/seed/bacon-burger/169/127',
+    image: 'https://images.unsplash.com/photo-1594212691516-7489508544c4?w=500&q=80',
     category: 'Burgers',
     ingredients: ['Two Beef Patties', 'Bacon', 'Pepper Jack Cheese', 'Caramelized Onions', 'BBQ Sauce', 'Brioche Bun'],
     customizationOptions: [
@@ -235,7 +235,7 @@ export const allProducts: Product[] = [
     description: 'Kale, cucumber, celery, green apple, and ginger – a cleansing powerhouse.',
     price: '$6.50',
     rating: '4.6',
-    image: 'https://picsum.photos/seed/detox-juice/169/127',
+    image: 'https://images.unsplash.com/photo-1610970881699-44a5587ce578?w=500&q=80',
     category: 'Juices',
     ingredients: ['Kale', 'Cucumber', 'Celery', 'Green Apple', 'Ginger'],
     customizationOptions: [
@@ -266,7 +266,7 @@ export const allProducts: Product[] = [
     description: 'A plant-based patty with roasted peppers, avocado, sprouts, and tahini dressing.',
     price: '$10.20',
     rating: '4.7',
-    image: 'https://picsum.photos/seed/veggie-burger/169/127',
+    image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?w=500&q=80',
     category: 'Burgers',
     ingredients: ['Plant-Based Patty', 'Roasted Peppers', 'Avocado', 'Sprouts', 'Tahini Dressing', 'Whole Wheat Bun'],
     customizationOptions: [
@@ -297,7 +297,7 @@ export const allProducts: Product[] = [
     description: 'Fresh strawberries, lemon juice, sparkling water, and a touch of honey.',
     price: '$5.90',
     rating: '4.5',
-    image: 'https://picsum.photos/seed/strawberry-lemonade/169/127',
+    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&q=80',
     category: 'Drinks',
     ingredients: ['Strawberries', 'Lemon Juice', 'Sparkling Water', 'Honey'],
     customizationOptions: [
@@ -329,7 +329,7 @@ export const allProducts: Product[] = [
     description: 'Crispy chicken breast, spicy mayo, jalapeños, pepper jack, and coleslaw.',
     price: '$9.80',
     rating: '4.6',
-    image: 'https://picsum.photos/seed/chicken-burger/169/127',
+    image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=500&q=80',
     category: 'Burgers',
     ingredients: ['Crispy Chicken Breast', 'Spicy Mayo', 'Jalapeños', 'Pepper Jack Cheese', 'Coleslaw', 'Brioche Bun'],
     customizationOptions: [
@@ -360,7 +360,7 @@ export const allProducts: Product[] = [
     description: 'Brewed black tea, peach puree, and a hint of mint – refreshing and light.',
     price: '$4.50',
     rating: '4.4',
-    image: 'https://picsum.photos/seed/peach-tea/169/127',
+    image: 'https://images.unsplash.com/photo-1499638673689-79a0b5115d87?w=500&q=80',
     category: 'Drinks',
     ingredients: ['Black Tea', 'Peach Puree', 'Mint'],
     customizationOptions: [
@@ -382,7 +382,7 @@ export const allProducts: Product[] = [
     description: 'Hand-breaded chicken tenders, served with honey mustard or BBQ sauce.',
     price: '$7.50',
     rating: '4.5',
-    image: 'https://picsum.photos/seed/chicken-tenders/169/127',
+    image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=500&q=80',
     category: 'Snacks',
     ingredients: ['Chicken Breast', 'Breading', 'Honey Mustard Sauce', 'BBQ Sauce'],
     customizationOptions: [
@@ -414,7 +414,7 @@ export const allProducts: Product[] = [
     description: 'Smashed avocado on sourdough, topped with cherry tomatoes, radish, and sea salt.',
     price: '$6.80',
     rating: '4.7',
-    image: 'https://picsum.photos/seed/avocado-toast/169/127',
+    image: 'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=500&q=80',
     category: 'Snacks',
     ingredients: ['Sourdough Bread', 'Avocado', 'Cherry Tomatoes', 'Radish', 'Sea Salt'],
     customizationOptions: [
@@ -446,7 +446,7 @@ export const allProducts: Product[] = [
     description: 'Smooth espresso, steamed milk, and house-made caramel syrup – a cozy treat.',
     price: '$5.20',
     rating: '4.6',
-    image: 'https://picsum.photos/seed/caramel-latte/169/127',
+    image: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=500&q=80',
     category: 'Drinks',
     ingredients: ['Espresso', 'Steamed Milk', 'Caramel Syrup'],
     customizationOptions: [
@@ -479,7 +479,7 @@ export const allProducts: Product[] = [
     description: 'Crispy sweet potato fries with chipotle aioli dipping sauce.',
     price: '$4.90',
     rating: '4.3',
-    image: 'https://picsum.photos/seed/sweet-potato-fries/169/127',
+    image: 'https://images.unsplash.com/photo-1576107246536-cb7db4378198?w=500&q=80',
     category: 'Snacks',
     ingredients: ['Sweet Potatoes', 'Oil', 'Salt', 'Chipotle Aioli'],
     customizationOptions: [
@@ -511,7 +511,7 @@ export const allProducts: Product[] = [
     description: 'Grilled mushrooms, Swiss cheese, and truffle aioli on a brioche bun.',
     price: '$10.50',
     rating: '4.8',
-    image: 'https://picsum.photos/seed/mushroom-swiss/169/127',
+    image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80',
     category: 'Burgers',
     ingredients: ['Beef Patty', 'Mushrooms', 'Swiss Cheese', 'Truffle Aioli', 'Brioche Bun'],
     customizationOptions: [
@@ -542,7 +542,7 @@ export const allProducts: Product[] = [
     description: 'Fresh watermelon, mint, and a splash of lime – perfect for hot days.',
     price: '$6.00',
     rating: '4.6',
-    image: 'https://picsum.photos/seed/watermelon-cooler/169/127',
+    image: 'https://images.unsplash.com/photo-1589733955437-06f1577740cd?w=500&q=80',
     category: 'Drinks',
     ingredients: ['Watermelon', 'Mint', 'Lime'],
     customizationOptions: [
@@ -571,7 +571,7 @@ export const allProducts: Product[] = [
     description: 'Creamy chocolate and peanut butter blended with ice cream and milk.',
     price: '$7.80',
     rating: '4.9',
-    image: 'https://picsum.photos/seed/chocolate-peanut/169/127',
+    image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&q=80',
     category: 'Smoothies',
     ingredients: ['Chocolate Ice Cream', 'Peanut Butter', 'Milk', 'Chocolate Syrup'],
     customizationOptions: [
@@ -602,7 +602,7 @@ export const allProducts: Product[] = [
     description: 'Thick-cut onion rings, battered and fried until golden, with ranch dip.',
     price: '$5.50',
     rating: '4.4',
-    image: 'https://picsum.photos/seed/onion-rings/169/127',
+    image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?w=500&q=80',
     category: 'Snacks',
     ingredients: ['Onions', 'Batter', 'Ranch Dip'],
     customizationOptions: [
@@ -634,7 +634,7 @@ export const allProducts: Product[] = [
     description: 'Brown rice, black beans, corn salsa, guacamole, and spicy tofu.',
     price: '$9.20',
     rating: '4.5',
-    image: 'https://picsum.photos/seed/burrito-bowl/169/127',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80',
     category: 'Bowls',
     ingredients: ['Brown Rice', 'Black Beans', 'Corn Salsa', 'Guacamole', 'Spicy Tofu'],
     customizationOptions: [
@@ -665,7 +665,7 @@ export const allProducts: Product[] = [
     description: 'Pineapple, coconut cream, and a hint of vanilla – like a tropical getaway.',
     price: '$7.00',
     rating: '4.7',
-    image: 'https://picsum.photos/seed/pineapple-coconut/169/127',
+    image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&q=80',
     category: 'Smoothies',
     ingredients: ['Pineapple', 'Coconut Cream', 'Vanilla Extract', 'Coconut Water'],
     customizationOptions: [

@@ -46,9 +46,36 @@
     "en": "EN",
     "ar": "AR"
   },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
   "reviews": {
     "title": "Reviews",
     "noReviews": "No reviews yet.",
     "viewMore": "View More"
+  },
+  "trustBadges": {
+    "fastDelivery": "Fast Delivery",
+    "premiumQuality": "Premium Quality",
+    "securePayment": "Secure Payment",
+    "support": "24/7 Support"
+  },
+  "flashSale": {
+    "title": "Deal of the Day",
+    "endsIn": "Ends in"
+  },
+  "newsletter": {
+    "title": "Join Our Newsletter",
+    "subtitle": "Get 10% off your first order!",
+    "placeholder": "Enter your email address",
+    "button": "Subscribe"
+  },
+  "productCard": {
+    "addToCart": "Add to Cart"
   }
 }

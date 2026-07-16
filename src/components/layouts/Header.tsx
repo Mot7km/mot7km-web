@@ -1,39 +1,62 @@
+'use client';
+
 import { UtensilsCrossed } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
-import { ThemeSwitcher } from '@/components/common/ThemeSwitcher';
-import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { SettingsMenu } from '@/components/common/SettingsMenu';
 
 export function Header() {
   const t = useTranslations();
   const locale = useLocale();
-  const isRTL = locale === 'ar'; // adjust if your Arabic locale code differs
+  const isRTL = locale === 'ar';
 
   return (
     <header
-      className="relative flex min-h-[30vh] sm:min-h-[40vh] w-full items-end justify-start px-4 py-4 sm:px-5 sm:py-5 bg-cover bg-center bg-no-repeat rounded-b-4xl overflow-hidden"
-      style={{ backgroundImage: "url('/download.png')" }}
+      className="relative flex min-h-[32vh] sm:min-h-[42vh] w-full items-end justify-start rounded-b-[2rem] sm:rounded-b-[2.5rem]"
+      style={{
+        background: 'var(--gradient-hero)',
+        backgroundSize: '200% 200%',
+        animation: 'gradient-shift 8s ease-in-out infinite alternate',
+      }}
     >
-      <div className="absolute inset-0 bg-black/50 dark:bg-black/70" />
-
-      {/* Switcher – now uses logical `end-3` and `top-3` */}
-      <div className="absolute end-3 top-3 z-20 flex items-center gap-1.5 rounded-full bg-[var(--color-text-on-primary)]/10 px-2 py-1.5 backdrop-blur-md sm:end-4 sm:top-4 sm:gap-2 sm:px-3 sm:py-2 md:end-6 md:top-6 md:gap-3">
-        <LanguageSwitcher />
-        <ThemeSwitcher />
+      {/* ── Clipped decorative layer (background + orbs) ── */}
+      <div className="absolute inset-0 overflow-hidden rounded-b-[2rem] sm:rounded-b-[2.5rem] pointer-events-none">
+        {/* Soft depth overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/20" />
+        {/* Orbs */}
+        <div className="absolute -top-20 -end-20 w-64 h-64 rounded-full bg-[var(--color-accent)]/20 opacity-70" />
+        <div className="absolute -bottom-16 -start-16 w-48 h-48 rounded-full bg-[var(--color-primary)]/25 opacity-60" style={{ animationDelay: '2s' }} />
       </div>
 
-      <div className="relative z-10 flex flex-col items-start px-3 text-start sm:px-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-[var(--color-text-on-primary)]/30 bg-[var(--color-text-on-primary)]/10 backdrop-blur-sm shadow-2xl sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32">
+      {/* ── Settings gear (not clipped) ── */}
+      <div className="absolute end-4 top-4 z-20 sm:end-5 sm:top-5 md:end-6 md:top-6">
+        <SettingsMenu />
+      </div>
+
+      {/* ── Content (not clipped) ── */}
+      <div className="relative z-10 flex flex-col items-start px-5 pb-6 sm:px-8 sm:pb-8 md:pb-10 lg:pb-12">
+        {/* Logo */}
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/30 bg-white/15 backdrop-blur-md shadow-lg sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 transition-transform duration-300 hover:scale-105 hover:border-white/50">
           <UtensilsCrossed
-            strokeWidth={2.5}
-            className="h-8 w-8 text-[var(--color-text-on-primary)] sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"
+            strokeWidth={2.2}
+            className="h-8 w-8 text-white sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 drop-shadow-lg"
           />
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-[var(--color-text-on-primary)] drop-shadow-lg sm:mt-6 sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
+
+        <h1
+          className="mt-4 text-3xl font-extrabold text-white drop-shadow-xl sm:mt-5 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tight"
+          style={{
+            fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif',
+            textShadow: '0 2px 12px rgba(0,0,0,0.25)',
+          }}
+        >
           {t('common.brandName')}
         </h1>
-        <p className="mt-1 text-sm font-medium text-[var(--color-text-on-primary)]/90 drop-shadow-md sm:mt-4 sm:text-base md:text-lg lg:text-xl">
+
+        <p className="mt-1.5 max-w-md text-sm font-medium text-white/90 drop-shadow-md sm:mt-3 sm:max-w-lg sm:text-base md:text-lg lg:text-xl">
           {t('header.tagline')}
         </p>
+
+        <div className="mt-4 h-1 w-16 rounded-full bg-gradient-to-r from-white/80 to-transparent sm:mt-5 sm:w-24 shadow-[0_0_12px_rgba(255,255,255,0.3)]" />
       </div>
     </header>
   );
