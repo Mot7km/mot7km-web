@@ -9,7 +9,7 @@ import { promoCards, PromoCardData } from '@/data/menupromo';
 import { usePathname } from 'next/navigation';
 
 // -------------------------------------------------------------------
-// Main Carousel
+// Main Carousel – full‑width on mobile, container‑width on larger screens
 // -------------------------------------------------------------------
 export function PromotionalCarousel() {
   const pathname = usePathname();
@@ -44,7 +44,12 @@ export function PromotionalCarousel() {
   const scrollTo = (index: number) => emblaApi?.scrollTo(index);
 
   return (
-    <section className="w-full overflow-hidden py-2">
+    // Mobile: full‑width breakout (100vw) – Large screens: respect container (auto)
+    <section
+      className="relative overflow-hidden py-2
+        w-screen left-1/2 -translate-x-1/2
+        sm:w-auto sm:left-0 sm:translate-x-0"
+    >
       <div className="relative">
         {/* Carousel Viewport */}
         <div>
@@ -67,7 +72,7 @@ export function PromotionalCarousel() {
           </div>
         </div>
 
-        {/* Navigation Arrows — glassmorphism */}
+        {/* Navigation Arrows — hidden on mobile, visible on sm+ */}
         <button
           onClick={scrollPrev}
           className="absolute top-1/2 left-0 -translate-y-1/2 z-10
@@ -100,7 +105,7 @@ export function PromotionalCarousel() {
           <ChevronRight className="w-5 h-5" />
         </button>
 
-        {/* Dots — refined */}
+        {/* Dots */}
         <div className="mt-5 flex justify-center gap-2">
           {promoCards.map((_, index) => (
             <button

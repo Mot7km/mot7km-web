@@ -86,9 +86,9 @@ export default function Home() {
         <div className="mx-auto max-w-5xl md:max-w-6xl">
           <div className="relative">
             {/* Combined sticky container for SearchBar and Categories */}
-            <div className="sticky top-0 z-10 bg-[var(--color-background)] py-3 md:py-4">
+            <div className="sticky top-0 z-10 bg-[var(--color-background)]">
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
-              <div className="flex w-full justify-center py-4">
+              <div className="flex w-full justify-center">
                 <Categories
                   categories={categories}
                   activeCategory={activeCategory}

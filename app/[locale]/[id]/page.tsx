@@ -39,24 +39,26 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
 
   return (
     <div className="min-h-screen bg-[var(--color-background)] py-6 md:py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Back button */}
-        <Link
-          href={`/${locale}`}
-          className="inline-flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] mb-4 md:mb-6 transition-colors"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M15 10H5M5 10L9 14M5 10L9 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          {t('productPage.backToMenu')}
-        </Link>
+      {/* Sticky Back Button */}
+      <Link
+        href={`/${locale}`}
+        className="fixed top-4 left-4 z-50 inline-flex items-center gap-2 bg-[var(--color-surface)] text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] px-3 py-2 rounded-full shadow-lg border border-[var(--color-border)] transition-all duration-200 hover:shadow-xl hover:scale-105"
+        aria-label={t('productPage.backToMenu')}
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path
+            d="M15 10H5M5 10L9 14M5 10L9 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span className="inline">{t('productPage.backToMenu')}</span>
+      </Link>
 
+      {/* Main content – add top padding to avoid being hidden behind the fixed button */}
+      <div className="max-w-4xl mx-auto pt-12 sm:pt-14 md:pt-16">
         {/* Product Detail Card */}
         <div className="bg-[var(--color-surface)] rounded-2xl shadow-xl overflow-hidden">
           {/* Image */}
