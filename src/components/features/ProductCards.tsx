@@ -36,7 +36,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link
       href={href}
       prefetch={false}
-      className="group relative flex flex-col w-full min-h-[280px]
+      className="group relative flex flex-col w-full h-full
         bg-[var(--color-surface)] rounded-2xl
         border border-[var(--color-border)]
         overflow-hidden
@@ -65,6 +65,15 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent
           opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* Floating Add to Cart Button */}
+        <button 
+          onClick={handleQuickAdd}
+          className="absolute top-3 start-3 z-20 flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 dark:bg-black/70 backdrop-blur-md border border-[var(--color-border)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 shadow-[0_4px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(22,131,199,0.3)] hover:scale-110 active:scale-95"
+          aria-label="Add to cart"
+        >
+          <ShoppingBag size={16} />
+        </button>
 
         {/* Floating price tag (glassmorphism) */}
         <div className="absolute bottom-3 end-3 z-10">
@@ -102,42 +111,31 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
 
-        {/* Bottom row – rating and add button */}
-        <div className="flex items-center justify-between mt-2 pt-2.5 border-t border-[var(--color-divider)]">
-          <div className="flex items-center gap-2">
-            {/* Category tag */}
-            {product.category && (
-              <span className="text-[10px] font-medium text-[var(--color-text-muted)]
-                bg-[var(--color-card-light)] dark:bg-[var(--color-elevated-dark)]
-                px-2.5 py-0.5 rounded-full truncate max-w-[80px]">
-                {product.category}
-              </span>
-            )}
+        {/* Bottom row – rating */}
+        <div className="flex items-center justify-between mt-auto pt-2.5 border-t border-[var(--color-divider)]">
+          {/* Category tag */}
+          {product.category && (
+            <span className="text-[10px] font-medium text-[var(--color-text-muted)]
+              bg-[var(--color-card-light)] dark:bg-[var(--color-elevated-dark)]
+              px-2.5 py-0.5 rounded-full truncate max-w-[100px]">
+              {product.category}
+            </span>
+          )}
 
-            {/* Rating badge */}
-            <div className="flex items-center gap-1.5
-              bg-[var(--color-primary-50)] px-2.5 py-1 rounded-full
-              transition-all duration-300
-              group-hover:shadow-[0_0_12px_rgba(22,131,199,0.15)]">
-              <Star
-                size={13}
-                className="text-[var(--color-warning)] fill-[var(--color-warning)]"
-                strokeWidth={0}
-              />
-              <span className="text-xs font-bold text-[var(--color-text-primary)] leading-none">
-                {product.rating}
-              </span>
-            </div>
+          {/* Rating badge */}
+          <div className="flex items-center gap-1.5
+            bg-[var(--color-primary-50)] px-2.5 py-1 rounded-full
+            transition-all duration-300
+            group-hover:shadow-[0_0_12px_rgba(22,131,199,0.15)]">
+            <Star
+              size={13}
+              className="text-[var(--color-warning)] fill-[var(--color-warning)]"
+              strokeWidth={0}
+            />
+            <span className="text-xs font-bold text-[var(--color-text-primary)] leading-none">
+              {product.rating}
+            </span>
           </div>
-          
-          {/* Quick Add Button */}
-          <button 
-            onClick={handleQuickAdd}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)] transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 z-20"
-            aria-label="Add to cart"
-          >
-            <ShoppingBag size={14} />
-          </button>
         </div>
       </div>
     </Link>
