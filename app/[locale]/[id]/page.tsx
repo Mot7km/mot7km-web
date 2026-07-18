@@ -35,7 +35,7 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
   }, [product.reviews]);
 
   return (
-    <div className="relative min-h-screen pb-12 overflow-x-hidden">
+    <div className="relative min-h-screen pb-12 overflow-x-clip">
       {/* ── Background Floating Orbs ── */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--color-primary)]/10 blur-[100px] rounded-full pointer-events-none animate-orb-1 -z-10" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[var(--color-accent)]/10 blur-[80px] rounded-full pointer-events-none animate-orb-2 -z-10" />
