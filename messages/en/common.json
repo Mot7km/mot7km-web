@@ -77,5 +77,15 @@
   },
   "productCard": {
     "addToCart": "Add to Cart"
+  },
+  "storeInfo": {
+    "open": "Open Now",
+    "closed": "Closed",
+    "phone": "Phone",
+    "address": "Address",
+    "email": "Email",
+    "hours": "Working Hours",
+    "todayHours": "Today's Hours",
+    "viewOnMap": "View on Map"
   }
 }

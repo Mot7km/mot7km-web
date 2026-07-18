@@ -6,8 +6,11 @@ import { PromotionalCarousel } from '@/components/features/PromotionalCarousel';
 import Categories from '@/components/features/PromotionalCategories';
 import ListContainer from '@/components/common/ListContainer';
 import SearchBar from '@/components/common/SearchBar';
-import { NewsletterSection } from '@/components/features/NewsletterSection';
+
+import { StoreInfoBar } from '@/components/features/StoreInfoBar';
 import { allProducts } from '@/data/menu';
+
+import { Header } from '@/components/layouts/Header';
 
 export default function Home() {
   const t = useTranslations();
@@ -66,6 +69,10 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
+      <Header />
+      {/* ─────── STORE INFO BAR ─────── */}
+      <StoreInfoBar />
+
       {/* ─────── PROMOTIONAL CAROUSEL ─────── */}
       <section className="section-glow relative w-full px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
@@ -80,24 +87,22 @@ export default function Home() {
       </section>
 
       {/* ─────── GRADIENT DIVIDER ─────── */}
-      <div className="section-divider w-full max-w-3xl mx-auto" />
+      <div className="section-divider-premium w-full max-w-3xl mx-auto" />
 
       {/* ─────── STICKY SEARCH + CATEGORIES + PRODUCT LIST ─────── */}
       <section className="section-glow relative w-full px-4 pb-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
           <div className="relative">
-            {/* Sticky Search Bar (only search stays sticky) */}
-            <div className="sticky top-0 z-10 py-3 md:py-4">
+            {/* Sticky Search & Categories */}
+            <div className="sticky top-0 z-30 bg-[var(--color-background)]/90 backdrop-blur-xl border-b border-[var(--color-border)]/50 pt-3 pb-1 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 mb-6 shadow-sm transition-all duration-300">
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
-            </div>
-
-            {/* Categories – placed right below search, centered */}
-            <div className="flex w-full justify-center py-4">
-              <Categories
-                categories={categories}
-                activeCategory={activeCategory}
-                onSelectCategory={setActiveCategory}
-              />
+              <div className="flex w-full justify-center pt-1 pb-2">
+                <Categories
+                  categories={categories}
+                  activeCategory={activeCategory}
+                  onSelectCategory={setActiveCategory}
+                />
+              </div>
             </div>
 
             {/* Product list */}
@@ -105,6 +110,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+
     </div>
   );
 }

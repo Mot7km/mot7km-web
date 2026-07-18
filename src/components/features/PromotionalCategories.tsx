@@ -23,13 +23,13 @@ export default function Categories({
     <div className="relative w-full">
       {/* Centering wrapper */}
       <div className="flex justify-center">
-        {/* Scrollable container – auto‑sized, but limited to 100% width */}
+        {/* Scrollable container */}
         <div
           className="
             flex flex-nowrap gap-2 sm:gap-3 md:gap-4
             overflow-x-auto
             justify-start
-            py-4 sm:py-5
+            py-2 sm:py-3
             px-4 sm:px-6 md:px-8
             max-w-full
             scrollbar-hide
@@ -59,7 +59,7 @@ export default function Categories({
                 aria-pressed={isActive}
                 aria-current={isActive ? 'page' : undefined}
               >
-                {/* Circular avatar */}
+                {/* Circular avatar with gradient ring */}
                 <div
                   className={`
                     relative
@@ -68,14 +68,39 @@ export default function Categories({
                     md:w-16 md:h-16
                     lg:w-20 lg:h-20
                     rounded-full
-                    transition-all duration-300 ease-out
+                    transition-all duration-400 ease-out
                     ${
                       isActive
-                        ? 'ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg shadow-primary/20 scale-110'
+                        ? 'scale-110'
                         : 'ring-1 ring-border/50 group-hover:ring-primary/40 group-hover:scale-105 shadow-sm'
                     }
                   `}
                 >
+                  {/* Gradient ring for active */}
+                  {isActive && (
+                    <div
+                      className="absolute -inset-[3px] rounded-full pointer-events-none"
+                      style={{
+                        background: 'var(--gradient-primary)',
+                        padding: '2.5px',
+                        mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                        maskComposite: 'exclude',
+                        WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                        WebkitMaskComposite: 'xor',
+                      }}
+                    />
+                  )}
+
+                  {/* Glow shadow for active */}
+                  {isActive && (
+                    <div
+                      className="absolute inset-0 rounded-full pointer-events-none"
+                      style={{
+                        boxShadow: '0 4px 20px rgba(22, 131, 199, 0.25), 0 0 40px rgba(22, 131, 199, 0.1)',
+                      }}
+                    />
+                  )}
+
                   <Image
                     src={category.image}
                     alt={category.label}
@@ -86,21 +111,35 @@ export default function Categories({
                   />
                 </div>
 
-                {/* Label */}
+                {/* Label with gradient text for active */}
                 <span
                   className={`
                     text-[10px] xs:text-xs sm:text-sm font-semibold leading-tight
-                    transition-colors duration-200
+                    transition-all duration-300
                     max-w-[72px] truncate text-center
                     ${
                       isActive
-                        ? 'text-primary'
+                        ? 'font-bold'
                         : 'text-muted-foreground group-hover:text-foreground'
                     }
                   `}
+                  style={isActive ? {
+                    background: 'var(--gradient-primary)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  } : undefined}
                 >
                   {category.label}
                 </span>
+
+                {/* Active indicator dot */}
+                {isActive && (
+                  <div
+                    className="w-1.5 h-1.5 rounded-full -mt-0.5 animate-scale-in"
+                    style={{ background: 'var(--gradient-primary)' }}
+                  />
+                )}
               </button>
             );
           })}

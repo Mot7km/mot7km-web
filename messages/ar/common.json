@@ -77,5 +77,15 @@
   },
   "productCard": {
     "addToCart": "أضف للسلة"
+  },
+  "storeInfo": {
+    "open": "مفتوح الآن",
+    "closed": "مغلق",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "email": "البريد الإلكتروني",
+    "hours": "مواعيد العمل",
+    "todayHours": "مواعيد اليوم",
+    "viewOnMap": "عرض على الخريطة"
   }
 }
