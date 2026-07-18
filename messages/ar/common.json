@@ -37,7 +37,10 @@
   },
   "productPage": {
     "backToMenu": "العودة إلى القائمة",
-    "ingredients": "المكونات"
+    "ingredients": "المكونات",
+    "total": "الإجمالي",
+    "addToCart": "أضف للسلة",
+    "add": "إضافة"
   },
   "customization": {
     "title": "تخصيص"
@@ -87,5 +90,12 @@
     "hours": "مواعيد العمل",
     "todayHours": "مواعيد اليوم",
     "viewOnMap": "عرض على الخريطة"
+  },
+  "cart": {
+    "total": "الإجمالي",
+    "yourOrder": "طلبك",
+    "grandTotal": "الإجمالي الكلي",
+    "checkout": "جاهز للطلب (الدفع مع الويتر)",
+    "clearCart": "إفراغ السلة"
   }
 }

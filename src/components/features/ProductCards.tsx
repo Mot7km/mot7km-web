@@ -2,9 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star } from 'lucide-react';
+import { Star, ShoppingBag } from 'lucide-react';
 import { Product } from '@/data/menu';
 import { useLocale } from '@/hooks/useLocale';
+import { useCart } from '@/context/CartContext';
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,23 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const locale = useLocale();
   const href = `/${locale}/${product.id}`;
+  const { addToCart, setIsDrawerOpen } = useCart();
+
+  const handleQuickAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Get default selections
+    const defaults: Record<string, string> = {};
+    if (product.customizationOptions) {
+      for (const opt of product.customizationOptions) {
+        if (opt.defaultChoice) defaults[opt.name] = opt.defaultChoice;
+        else if (opt.choices.length > 0) defaults[opt.name] = opt.choices[0].label;
+      }
+    }
+    
+    addToCart(product, defaults, 1);
+  };
 
   return (
     <Link
@@ -84,31 +102,42 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
 
-        {/* Bottom row – rating */}
+        {/* Bottom row – rating and add button */}
         <div className="flex items-center justify-between mt-2 pt-2.5 border-t border-[var(--color-divider)]">
-          {/* Category tag */}
-          {product.category && (
-            <span className="text-[10px] font-medium text-[var(--color-text-muted)]
-              bg-[var(--color-card-light)] dark:bg-[var(--color-elevated-dark)]
-              px-2.5 py-0.5 rounded-full truncate max-w-[100px]">
-              {product.category}
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {/* Category tag */}
+            {product.category && (
+              <span className="text-[10px] font-medium text-[var(--color-text-muted)]
+                bg-[var(--color-card-light)] dark:bg-[var(--color-elevated-dark)]
+                px-2.5 py-0.5 rounded-full truncate max-w-[80px]">
+                {product.category}
+              </span>
+            )}
 
-          {/* Rating badge */}
-          <div className="flex items-center gap-1.5
-            bg-[var(--color-primary-50)] px-2.5 py-1 rounded-full
-            transition-all duration-300
-            group-hover:shadow-[0_0_12px_rgba(22,131,199,0.15)]">
-            <Star
-              size={13}
-              className="text-[var(--color-warning)] fill-[var(--color-warning)]"
-              strokeWidth={0}
-            />
-            <span className="text-xs font-bold text-[var(--color-text-primary)] leading-none">
-              {product.rating}
-            </span>
+            {/* Rating badge */}
+            <div className="flex items-center gap-1.5
+              bg-[var(--color-primary-50)] px-2.5 py-1 rounded-full
+              transition-all duration-300
+              group-hover:shadow-[0_0_12px_rgba(22,131,199,0.15)]">
+              <Star
+                size={13}
+                className="text-[var(--color-warning)] fill-[var(--color-warning)]"
+                strokeWidth={0}
+              />
+              <span className="text-xs font-bold text-[var(--color-text-primary)] leading-none">
+                {product.rating}
+              </span>
+            </div>
           </div>
+          
+          {/* Quick Add Button */}
+          <button 
+            onClick={handleQuickAdd}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)] transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 z-20"
+            aria-label="Add to cart"
+          >
+            <ShoppingBag size={14} />
+          </button>
         </div>
       </div>
     </Link>

@@ -8,9 +8,10 @@ import { Settings2, Plus, Check } from 'lucide-react';
 interface CustomizationOptionsProps {
   product: Product;
   onPriceChange?: (total: string, extras: number) => void;
+  onSelectionsChange?: (selections: Record<string, string>) => void;
 }
 
-export function CustomizationOptions({ product, onPriceChange }: CustomizationOptionsProps) {
+export function CustomizationOptions({ product, onPriceChange, onSelectionsChange }: CustomizationOptionsProps) {
   const t = useTranslations();
 
   const getDefaultSelections = (): Record<string, string> => {
@@ -44,6 +45,7 @@ export function CustomizationOptions({ product, onPriceChange }: CustomizationOp
     setExtraTotal(extras);
     const total = computeTotalPrice(product, newSelections);
     if (onPriceChange) onPriceChange(total, extras);
+    if (onSelectionsChange) onSelectionsChange(newSelections);
   };
 
   const handleSelect = (optionName: string, choiceLabel: string) => {

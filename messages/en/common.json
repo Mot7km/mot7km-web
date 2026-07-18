@@ -37,7 +37,10 @@
   },
   "productPage": {
     "backToMenu": "Back to menu",
-    "ingredients": "Ingredients"
+    "ingredients": "Ingredients",
+    "total": "Total",
+    "addToCart": "Add to Cart",
+    "add": "Add"
   },
   "customization": {
     "title": "Customization"
@@ -87,5 +90,12 @@
     "hours": "Working Hours",
     "todayHours": "Today's Hours",
     "viewOnMap": "View on Map"
+  },
+  "cart": {
+    "total": "Total",
+    "yourOrder": "Your Order",
+    "grandTotal": "Grand Total",
+    "checkout": "Ready to Order (Pay with Waiter)",
+    "clearCart": "Clear Cart"
   }
 }

@@ -7,14 +7,20 @@ import { useTranslations } from 'next-intl';
 import { allProducts } from '@/data/menu';
 import { CustomizationOptions } from '@/components/features/CustomizationOptions';
 import ListContainer from '@/components/common/ListContainer';
-import { ArrowLeft, Sparkles, Star } from 'lucide-react';
-import { use, useMemo } from 'react';
+import { ArrowLeft, Sparkles, Star, ShoppingBag } from 'lucide-react';
+import { use, useMemo, useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   // Use `use()` to unwrap the Promise
   const resolvedParams = use(params);
   const { locale, id } = resolvedParams;
   const t = useTranslations();
+  const { addToCart, setIsDrawerOpen } = useCart();
+  
+  const [selections, setSelections] = useState<Record<string, string>>({});
+  const [extraTotal, setExtraTotal] = useState<number>(0);
+  const [quantity, setQuantity] = useState(1);
   
   const product = useMemo(() => allProducts.find((p) => p.id === id), [id]);
 
@@ -35,7 +41,7 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
   }, [product.reviews]);
 
   return (
-    <div className="relative min-h-screen pb-12 overflow-x-clip">
+    <div className="relative min-h-screen pb-32 overflow-x-clip">
       {/* ── Background Floating Orbs ── */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--color-primary)]/10 blur-[100px] rounded-full pointer-events-none animate-orb-1 -z-10" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[var(--color-accent)]/10 blur-[80px] rounded-full pointer-events-none animate-orb-2 -z-10" />
@@ -155,7 +161,11 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
           {/* CUSTOMIZATION */}
           {product.customizationOptions && product.customizationOptions.length > 0 && (
             <div className="pt-2 animate-fade-in-up stagger-7">
-              <CustomizationOptions product={product} />
+              <CustomizationOptions 
+                product={product} 
+                onSelectionsChange={setSelections}
+                onPriceChange={(total, extras) => setExtraTotal(extras)}
+              />
             </div>
           )}
 
@@ -168,6 +178,47 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
         </div>
       </div>
     </div>
+      
+    {/* ── Sticky Bottom Add To Cart Bar ── */}
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--color-surface)]/90 backdrop-blur-xl border-t border-[var(--color-border)] p-4 sm:p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] animate-slide-up">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex flex-col">
+            <span className="text-[var(--color-text-secondary)] text-sm font-medium">{t('productPage.total') || 'الإجمالي'}</span>
+            <span className="font-montserrat font-bold text-2xl text-[var(--color-text-primary)]">
+              ${((parseFloat(product.price.replace('$', '')) + extraTotal) * quantity).toFixed(2)}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="flex items-center bg-[var(--color-background)] rounded-full border border-[var(--color-border)] p-1">
+              <button 
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-surface)] text-[var(--color-text-primary)] transition-colors"
+              >
+                -
+              </button>
+              <span className="font-bold text-sm min-w-[1.5rem] text-center">{quantity}</span>
+              <button 
+                onClick={() => setQuantity(quantity + 1)}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-surface)] text-[var(--color-text-primary)] transition-colors"
+              >
+                +
+              </button>
+            </div>
+            
+            <button 
+              onClick={() => {
+                addToCart(product, selections, quantity);
+              }}
+              className="flex items-center gap-2 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white px-6 py-3 rounded-full font-bold shadow-[0_4px_15px_rgba(22,131,199,0.3)] hover:scale-105 active:scale-95 transition-all"
+            >
+              <ShoppingBag size={18} />
+              <span className="hidden sm:inline">{t('productPage.addToCart') || 'أضف للسلة'}</span>
+              <span className="sm:hidden">{t('productPage.add') || 'إضافة'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
