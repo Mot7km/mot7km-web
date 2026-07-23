@@ -6,11 +6,9 @@ import { PromotionalCarousel } from '@/components/features/PromotionalCarousel';
 import Categories from '@/components/features/PromotionalCategories';
 import ListContainer from '@/components/common/ListContainer';
 import SearchBar from '@/components/common/SearchBar';
-
 import { StoreInfoBar } from '@/components/features/StoreInfoBar';
 import { allProducts } from '@/data/menu';
 
-import { Header } from '@/components/layouts/Header';
 
 export default function Home() {
   const t = useTranslations();
@@ -69,7 +67,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <Header />
       {/* ─────── STORE INFO BAR ─────── */}
       <StoreInfoBar />
 
