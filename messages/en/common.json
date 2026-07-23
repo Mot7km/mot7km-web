@@ -40,7 +40,9 @@
     "ingredients": "Ingredients",
     "total": "Total",
     "addToCart": "Add to Cart",
-    "add": "Add"
+    "add": "Add",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity"
   },
   "customization": {
     "title": "Customization"
@@ -96,6 +98,8 @@
     "yourOrder": "Your Order",
     "grandTotal": "Grand Total",
     "checkout": "Ready to Order (Pay with Waiter)",
-    "clearCart": "Clear Cart"
+    "clearCart": "Clear Cart",
+    "openCart": "Open shopping cart",
+    "qty": "Quantity"
   }
 }

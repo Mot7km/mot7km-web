@@ -74,10 +74,8 @@ export function CustomizationOptions({ product, onPriceChange, onSelectionsChang
 
   return (
     <div className="w-full glass-card rounded-2xl overflow-hidden relative">
-      {/* Subtle top gradient accent */}
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent opacity-50" />
 
-      {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border)]/50 bg-[var(--color-surface)]/30 backdrop-blur-sm">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)]">
@@ -98,7 +96,6 @@ export function CustomizationOptions({ product, onPriceChange, onSelectionsChang
         )}
       </div>
 
-      {/* Options List */}
       <div className="p-6 space-y-5">
         {product.customizationOptions.map((option, idx) => {
           const isYesNo = isYesNoOption(option);
@@ -117,7 +114,7 @@ export function CustomizationOptions({ product, onPriceChange, onSelectionsChang
             };
 
             return (
-              <label
+              <div
                 key={option.name}
                 className={`flex items-center justify-between p-4 rounded-xl 
                   bg-[var(--color-surface)]/50 border border-[var(--color-border)]/60
@@ -135,29 +132,20 @@ export function CustomizationOptions({ product, onPriceChange, onSelectionsChang
                     </span>
                   )}
                 </div>
-                
-                {/* Premium Toggle/Checkbox */}
-                <div className="relative flex items-center justify-center w-6 h-6 ml-4">
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => {}} // handled by label onClick
-                    className="peer sr-only"
-                  />
-                  <div className={`w-6 h-6 rounded-md border-2 transition-all duration-300 flex items-center justify-center
-                    ${isChecked 
-                      ? 'bg-[var(--color-primary)] border-[var(--color-primary)] shadow-[0_0_10px_rgba(22,131,199,0.4)]' 
-                      : 'bg-transparent border-[var(--color-border-strong)] group-hover:border-[var(--color-primary)]/50'
-                    }`}
-                  >
-                    <Check size={14} strokeWidth={3} className={`text-white transition-transform duration-300 ${isChecked ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`} />
-                  </div>
+
+                <div className={`w-6 h-6 rounded-md border-2 transition-all duration-300 flex items-center justify-center ml-4
+                  ${isChecked 
+                    ? 'bg-[var(--color-primary)] border-[var(--color-primary)] shadow-[0_0_10px_rgba(22,131,199,0.4)]' 
+                    : 'bg-transparent border-[var(--color-border-strong)] group-hover:border-[var(--color-primary)]/50'
+                  }`}
+                >
+                  <Check size={14} strokeWidth={3} className={`text-white transition-transform duration-300 ${isChecked ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`} />
                 </div>
-              </label>
+              </div>
             );
           }
 
-          // Multi-choice Box
+          // Multi-choice
           return (
             <div
               key={option.name}
@@ -177,17 +165,16 @@ export function CustomizationOptions({ product, onPriceChange, onSelectionsChang
                         relative overflow-hidden
                         text-sm font-medium px-4 py-2 rounded-xl transition-all duration-300
                         hover:scale-[1.02] active:scale-[0.98]
+                        cursor-pointer
                         ${isSelected
                           ? 'text-white shadow-[0_4px_15px_rgba(22,131,199,0.3)] border-transparent'
                           : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-text-primary)]'
                         }
                       `}
                     >
-                      {/* Selected state gradient background */}
                       {isSelected && (
                         <div className="absolute inset-0" style={{ background: 'var(--gradient-primary)' }} />
                       )}
-                      
                       <span className="relative z-10 flex items-center gap-1.5">
                         {choice.label}
                         {choice.extraPrice > 0 && (

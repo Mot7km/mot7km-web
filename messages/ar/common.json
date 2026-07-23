@@ -40,7 +40,9 @@
     "ingredients": "المكونات",
     "total": "الإجمالي",
     "addToCart": "أضف للسلة",
-    "add": "إضافة"
+    "add": "إضافة",
+    "decreaseQuantity": "تقليل الكمية",
+    "increaseQuantity": "زيادة الكمية"
   },
   "customization": {
     "title": "تخصيص"
@@ -96,6 +98,8 @@
     "yourOrder": "طلبك",
     "grandTotal": "الإجمالي الكلي",
     "checkout": "جاهز للطلب (الدفع مع الويتر)",
-    "clearCart": "إفراغ السلة"
+    "clearCart": "إفراغ السلة",
+    "openCart": "فتح سلة التسوق",
+    "qty": "الكمية"
   }
 }

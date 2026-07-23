@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@use-gesture/react": "^10.3.1",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.23.0",
@@ -16,7 +17,8 @@
     "next-intl": "^4.13.1",
     "next-themes": "^0.4.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-spring": "^10.0.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
