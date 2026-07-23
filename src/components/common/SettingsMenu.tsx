@@ -140,7 +140,8 @@ export function SettingsMenu() {
             glass rounded-2xl
             shadow-xl
             animate-scale-in origin-top-right
-            overflow-hidden"
+            overflow-hidden
+            z-30"
         >
           {/* Language Section */}
           <div className="px-3 pt-3 pb-1">

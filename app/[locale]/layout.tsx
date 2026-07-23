@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Cairo, Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Cairo, Inter, Plus_Jakarta_Sans, Roboto } from "next/font/google";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Providers } from "@/components/providers";
 import { i18n } from "@/config/i18n";
 
-const inter = Inter({
-  variable: "--font-inter",
+const roboto = Roboto({
+  variable: "--font-roboto",
+   weight: ["300", "400", "500", "700"],
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
@@ -56,7 +57,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRTL ? "rtl" : "ltr"}
-      className={`${inter.variable} ${cairo.variable} ${plusJakarta.variable} h-full antialiased`}
+      className={`${roboto.variable} ${cairo.variable} ${plusJakarta.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body
@@ -65,7 +66,10 @@ export default async function LocaleLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            {children} 
+            <main className="flex flex-1 flex-col">
+              {children}
+            </main>
+            <Footer />
           </Providers>
         </NextIntlClientProvider>
       </body>

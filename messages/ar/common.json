@@ -37,7 +37,12 @@
   },
   "productPage": {
     "backToMenu": "العودة إلى القائمة",
-    "ingredients": "المكونات"
+    "ingredients": "المكونات",
+    "total": "الإجمالي",
+    "addToCart": "أضف للسلة",
+    "add": "إضافة",
+    "decreaseQuantity": "تقليل الكمية",
+    "increaseQuantity": "زيادة الكمية"
   },
   "customization": {
     "title": "تخصيص"
@@ -78,9 +83,23 @@
   "productCard": {
     "addToCart": "أضف للسلة"
   },
-  "notFound": {
-    "title": "الصفحة غير موجودة",
-    "description": "قد تكون الصفحة التي تبحث عنها قد حُذفت، أو تغير اسمها، أو أنها غير متاحة حالياً.",
-    "goHome": "العودة إلى الرئيسية"
+  "storeInfo": {
+    "open": "مفتوح الآن",
+    "closed": "مغلق",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "email": "البريد الإلكتروني",
+    "hours": "مواعيد العمل",
+    "todayHours": "مواعيد اليوم",
+    "viewOnMap": "عرض على الخريطة"
+  },
+  "cart": {
+    "total": "الإجمالي",
+    "yourOrder": "طلبك",
+    "grandTotal": "الإجمالي الكلي",
+    "checkout": "جاهز للطلب (الدفع مع الويتر)",
+    "clearCart": "إفراغ السلة",
+    "openCart": "فتح سلة التسوق",
+    "qty": "الكمية"
   }
 }
