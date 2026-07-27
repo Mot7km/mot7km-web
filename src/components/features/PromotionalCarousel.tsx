@@ -44,31 +44,29 @@ export function PromotionalCarousel() {
   const scrollTo = (index: number) => emblaApi?.scrollTo(index);
 
   return (
-    // Mobile: full‑width breakout (100vw) – Large screens: respect container (auto)
+    // Full‑width breakout on mobile, respect container on larger screens
     <section
-      className="relative overflow-hidden py-2
-        w-screen left-1/2 -translate-x-1/2
+      className="relative overflow-x-hidden py-2
+        w-fill left-1/2 -translate-x-1/2
         sm:w-auto sm:left-0 sm:translate-x-0"
     >
       <div className="relative">
         {/* Carousel Viewport */}
-        <div>
-          <div
-            className="overflow-hidden rounded-2xl"
-            ref={emblaRef}
-            dir={isRTL ? 'rtl' : 'ltr'}
-          >
-            <div className="flex">
-              {promoCards.map((card) => (
-                <div
-                  key={card.id}
-                  className="min-w-0 flex-shrink-0 flex-grow-0 basis-[88%] sm:basis-[80%] md:basis-[60%] lg:basis-[50%]
-                    px-2 py-2 overflow-visible"
-                >
-                  <PromoCard {...card} />
-                </div>
-              ))}
-            </div>
+        <div
+          className="overflow-hidden rounded-2xl touch-pan-y"
+          ref={emblaRef}
+          dir={isRTL ? 'rtl' : 'ltr'}
+        >
+          <div className="flex">
+            {promoCards.map((card) => (
+              <div
+                key={card.id}
+                className="min-w-0 flex-shrink-0 flex-grow-0 basis-[85%] sm:basis-[75%] md:basis-[60%] lg:basis-[50%]
+                  px-2 py-2"
+              >
+                <PromoCard {...card} />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -129,7 +127,7 @@ export function PromotionalCarousel() {
 }
 
 // -------------------------------------------------------------------
-// Individual Promo Card
+// Individual Promo Card – fully responsive
 // -------------------------------------------------------------------
 function PromoCard({
   title,
@@ -143,14 +141,20 @@ function PromoCard({
 
   return (
     <div
-      className="group relative h-[220px] sm:h-[240px] w-full overflow-hidden rounded-2xl
+      className="group relative h-[200px] sm:h-[240px] md:h-[260px] w-full overflow-hidden rounded-2xl
         border border-[var(--color-border)]
         transition-all duration-400 ease-out
         hover:border-[var(--color-primary)]/50
         cursor-pointer"
       style={{ boxShadow: 'var(--shadow-card)' }}
-      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-card)'; e.currentTarget.style.transform = 'scale(1)'; }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)';
+        e.currentTarget.style.transform = 'scale(1.02)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = 'var(--shadow-card)';
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
     >
       {/* Image */}
       {image && (
@@ -161,6 +165,7 @@ function PromoCard({
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             priority
+            sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, (max-width: 1024px) 60vw, 50vw"
           />
           {/* Gradient overlay */}
           <div
@@ -180,16 +185,16 @@ function PromoCard({
       {/* Decorative Icon */}
       {hasIcon && (
         <div className="absolute bottom-0 right-0 opacity-[0.07] group-hover:opacity-[0.14] transition-opacity duration-400">
-          <Coffee className="h-36 w-36 text-[var(--color-primary)]" />
+          <Coffee className="h-32 w-32 sm:h-36 sm:w-36 text-[var(--color-primary)]" />
         </div>
       )}
 
       {/* Content */}
-      <div className="relative z-10 flex h-full flex-col justify-center px-6 py-5">
+      <div className="relative z-10 flex h-full flex-col justify-center px-4 sm:px-6 py-4 sm:py-5">
         {badge && (
           <span
-            className="mb-3 inline-flex w-fit items-center rounded-full
-              px-3 py-1 text-xs font-semibold tracking-wider uppercase
+            className="mb-2 sm:mb-3 inline-flex w-fit items-center rounded-full
+              px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold tracking-wider uppercase
               bg-white/15 text-white/95
               backdrop-blur-sm border border-white/10"
           >
@@ -198,8 +203,9 @@ function PromoCard({
         )}
 
         <h3
-          className={`text-2xl sm:text-[1.7rem] font-bold leading-tight tracking-tight
+          className={`text-xl sm:text-2xl md:text-[1.7rem] font-bold leading-tight tracking-tight
             ${image ? 'text-white' : 'text-[var(--color-text-primary)]'}
+            line-clamp-2
           `}
           style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}
         >
@@ -208,8 +214,9 @@ function PromoCard({
 
         {description && (
           <p
-            className={`mt-1.5 text-sm font-normal leading-5 max-w-sm
+            className={`mt-1 text-xs sm:text-sm font-normal leading-5 max-w-sm
               ${image ? 'text-white/85' : 'text-[var(--color-text-muted)]'}
+              line-clamp-2 sm:line-clamp-3
             `}
           >
             {description}

@@ -1,4 +1,3 @@
-// components/CartOverlay.tsx
 'use client';
 
 import React, { useEffect } from 'react';
@@ -7,7 +6,16 @@ import { FloatingCartButton } from './CartButton';
 import { CartDrawer } from './CartDrawer';
 
 export function CartOverlay() {
-  const { items, itemCount, totalPrice, isDrawerOpen, setIsDrawerOpen, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { 
+    items, 
+    itemCount, 
+    totalPrice, 
+    isDrawerOpen, 
+    setIsDrawerOpen, 
+    updateQuantity, 
+    removeFromCart, 
+    clearCart 
+  } = useCart();
 
   useEffect(() => {
     if (itemCount === 0 && isDrawerOpen) {
@@ -15,30 +23,32 @@ export function CartOverlay() {
     }
   }, [itemCount, isDrawerOpen, setIsDrawerOpen]);
 
+  // Completely unmount if the cart is empty AND the drawer is closed
   if (itemCount === 0 && !isDrawerOpen) {
     return null;
   }
 
   return (
     <>
-      {/* only visible when drawer is closed and cart not empty */}
-      {!isDrawerOpen && itemCount > 0 && (
-        <FloatingCartButton
-          itemCount={itemCount}
-          totalPrice={totalPrice}
-          onOpenDrawer={() => setIsDrawerOpen(true)}
-        />
-      )}
+      {/* 
+        We no longer conditionally unmount the button when the drawer opens.
+        Instead, we pass 'isVisible' so it can elegantly hide itself without losing its saved position!
+      */}
+      <FloatingCartButton 
+        itemCount={itemCount} 
+        totalPrice={totalPrice} 
+        onOpenDrawer={() => setIsDrawerOpen(true)} 
+        isVisible={!isDrawerOpen && itemCount > 0}
+      />
 
-      {/* Drawer */}
-      <CartDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        items={items}
-        totalPrice={totalPrice}
-        updateQuantity={updateQuantity}
-        removeFromCart={removeFromCart}
-        clearCart={clearCart}
+      <CartDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        items={items} 
+        totalPrice={totalPrice} 
+        updateQuantity={updateQuantity} 
+        removeFromCart={removeFromCart} 
+        clearCart={clearCart} 
       />
     </>
   );

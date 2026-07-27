@@ -106,14 +106,12 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <div className="flex flex-col flex-1 p-3 sm:p-4 gap-1.5">
-        <h4 className="font-bold text-sm sm:text-base leading-tight sm:leading-6 text-[var(--color-text-primary)] line-clamp-1
+        {/* 👇 removed line-clamp-1, added break-words */}
+        <h4 className="font-bold text-sm sm:text-base leading-tight sm:leading-6 text-[var(--color-text-primary)] break-words
           group-hover:text-[var(--color-primary)] transition-colors duration-300"
           style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}>
           {product.name}
         </h4>
-        <p className="text-xs leading-tight sm:leading-4 text-[var(--color-text-muted)] line-clamp-2 flex-1">
-          {product.description}
-        </p>
 
         <div className="flex items-center justify-between mt-auto pt-2 sm:pt-2.5 border-t border-[var(--color-divider)]">
           {product.category && (

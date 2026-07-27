@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { ShoppingBag, X, Trash2 } from 'lucide-react';
+import { ShoppingBag, X, Trash2, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
@@ -74,6 +74,23 @@ export function CartDrawer({
     group.itemIds.forEach((id) => removeFromCart(id));
   };
 
+  // Handle quantity change for a group
+  const handleQuantityChange = (group: (typeof groupedItems)[0], delta: number) => {
+    const firstId = group.itemIds[0];
+    if (delta > 0) {
+      // Increment the first item's quantity
+      updateQuantity(firstId, 1);
+    } else {
+      // Decrement: if total quantity > 1, decrease first item; otherwise remove it
+      if (group.quantity > 1) {
+        updateQuantity(firstId, -1);
+      } else {
+        // Remove the entire group (only one item left)
+        removeGroup(group);
+      }
+    }
+  };
+
   return (
     <>
       {isOpen && (
@@ -120,7 +137,7 @@ export function CartDrawer({
                 key={itemIds.join('-')}
                 className="relative flex gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-5 rounded-2xl glass-card border border-[var(--color-border)]/50 animate-fade-in-up"
               >
-                {/* Product image – no quantity badge anymore */}
+                {/* Product image */}
                 <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 shrink-0 rounded-xl overflow-hidden bg-[var(--color-card-light)]">
                   <Image src={product.image} alt={product.name} fill className="object-cover" />
                 </div>
@@ -131,7 +148,7 @@ export function CartDrawer({
                       {product.name}
                     </h4>
 
-                    {/* Selections – now in a responsive grid */}
+                    {/* Selections */}
                     {Object.keys(selections).length > 0 && (
                       <div className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                         {Object.entries(selections).map(([key, val]) => (
@@ -160,13 +177,35 @@ export function CartDrawer({
                       ${totalGroupPrice.toFixed(2)}
                     </span>
 
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <span className="text-xs sm:text-sm text-[var(--color-text-muted)] font-medium">
-                        {t('cart.qty')}:
-                      </span>
-                      <span className="inline-flex items-center justify-center min-w-[1.75rem] sm:min-w-[2rem] lg:min-w-[2.5rem] px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 lg:py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold text-xs sm:text-sm lg:text-base border border-[var(--color-primary)]/20 shadow-sm">
-                        {quantity}
-                      </span>
+                    {/* Quantity control - replaces static badge */}
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <div className="flex items-center bg-[var(--color-background)] rounded-full border border-[var(--color-border)] p-0.5 shadow-sm">
+                        <button
+                          onClick={() => handleQuantityChange(group, -1)}
+                          className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full 
+                            hover:bg-[var(--color-surface)] active:scale-90 
+                            text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]
+                            transition-all duration-200 cursor-pointer
+                            disabled:opacity-40 disabled:cursor-not-allowed"
+                          aria-label={t('decreaseQuantity') || 'Decrease quantity'}
+                          disabled={quantity <= 1}
+                        >
+                          <Minus size={16} />
+                        </button>
+                        <span className="font-bold text-sm sm:text-base min-w-[1.75rem] sm:min-w-[2rem] text-center text-[var(--color-text-primary)] select-none">
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={() => handleQuantityChange(group, 1)}
+                          className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full 
+                            hover:bg-[var(--color-surface)] active:scale-90 
+                            text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]
+                            transition-all duration-200 cursor-pointer"
+                          aria-label={t('increaseQuantity') || 'Increase quantity'}
+                        >
+                          <Plus size={16} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

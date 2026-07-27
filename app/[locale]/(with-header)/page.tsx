@@ -6,7 +6,6 @@ import { PromotionalCarousel } from '@/components/features/PromotionalCarousel';
 import Categories from '@/components/features/PromotionalCategories';
 import ListContainer from '@/components/common/ListContainer';
 import SearchBar from '@/components/common/SearchBar';
-import { StoreInfoBar } from '@/components/features/StoreInfoBar';
 import { allProducts } from '@/data/menu';
 
 
@@ -66,9 +65,7 @@ export default function Home() {
   }, [filteredProducts, t]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      {/* ─────── STORE INFO BAR ─────── */}
-      <StoreInfoBar />
+    <div className="flex flex-col items-center justify-center overflow-hidden">
 
       {/* ─────── PROMOTIONAL CAROUSEL ─────── */}
       <section className="section-glow relative w-full px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8">
