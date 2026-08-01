@@ -65,7 +65,7 @@ export default function Home() {
   }, [filteredProducts, t]);
 
   return (
-    <div className="flex flex-col items-center justify-center overflow-hidden">
+    <div className="flex flex-col items-center justify-center">
 
       {/* ─────── PROMOTIONAL CAROUSEL ─────── */}
       <section className="section-glow relative w-full px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8">
