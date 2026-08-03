@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useTheme } from '@/hooks/useTheme';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
@@ -17,7 +18,11 @@ export function SettingsMenu() {
 
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Refs for positioning and click‑outside detection
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     setMounted(true);
@@ -31,10 +36,34 @@ export function SettingsMenu() {
     } catch (e) {}
   }, []);
 
-  // Close on outside click
+  // ─── Update dropdown position ───
+  useEffect(() => {
+    if (!open) return;
+    const updatePosition = () => {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (rect) {
+        setPosition({
+          top: rect.bottom + window.scrollY + 8, // 8px gap
+          left: rect.right - 224 + window.scrollX, // 224px = w-56 (dropdown width)
+        });
+      }
+    };
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [open]);
+
+  // ─── Close on outside click ───
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const isTrigger = triggerRef.current?.contains(target);
+      const isDropdown = dropdownRef.current?.contains(target);
+      if (!isTrigger && !isDropdown) {
         setOpen(false);
       }
     };
@@ -42,7 +71,7 @@ export function SettingsMenu() {
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
-  // Close on Escape
+  // ─── Close on Escape ───
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
@@ -110,10 +139,100 @@ export function SettingsMenu() {
     label: loc === 'en' ? t('languages.en') : t('languages.ar'),
   }));
 
+  // ─── Dropdown content ───
+  const dropdownContent = (
+    <div
+      ref={dropdownRef}
+      className="w-56 glass rounded-2xl shadow-xl animate-scale-in origin-top-right overflow-hidden"
+      style={{
+        position: 'fixed',
+        top: position.top,
+        left: position.left,
+        zIndex: 9999,
+      }}
+    >
+      {/* Language Section */}
+      <div className="px-3 pt-3 pb-1">
+        <div className="flex items-center gap-2 px-1 pb-2">
+          <Globe className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+            {t('settings.language')}
+          </span>
+        </div>
+        <div className="flex gap-1.5">
+          {languageOptions.map((lang) => {
+            const isActive = currentLocale === lang.id;
+            return (
+              <button
+                key={lang.id}
+                onClick={() => switchLocale(lang.id)}
+                className={`
+                  flex-1 flex items-center justify-center gap-1.5
+                  py-2 rounded-xl text-sm font-medium
+                  transition-all duration-200 ease-out
+                  cursor-pointer
+                  ${isActive
+                    ? 'text-[var(--color-text-on-primary)] shadow-md'
+                    : 'bg-[var(--color-primary-50)] text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-100)]'
+                  }
+                `}
+                style={isActive ? { background: 'var(--gradient-primary)' } : undefined}
+              >
+                {isActive && <Check className="h-3 w-3" />}
+                {lang.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="section-divider mx-3 my-2" />
+
+      {/* Theme Section */}
+      <div className="px-3 pt-1 pb-3">
+        <div className="flex items-center gap-2 px-1 pb-2">
+          <Sun className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+            {t('settings.theme')}
+          </span>
+        </div>
+        <div className="flex flex-col gap-1">
+          {themeOptions.map(({ id, icon: Icon, label }) => {
+            const isActive = currentTheme === id;
+            return (
+              <button
+                key={id}
+                onClick={() => handleThemeChange(id)}
+                className={`
+                  flex items-center gap-3
+                  w-full px-3 py-2.5 rounded-xl
+                  text-sm font-medium
+                  transition-all duration-200 ease-out
+                  cursor-pointer
+                  ${isActive
+                    ? 'text-[var(--color-text-on-primary)] shadow-md'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-50)]'
+                  }
+                `}
+                style={isActive ? { background: 'var(--gradient-primary)' } : undefined}
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                <span className="flex-1 text-start">{label}</span>
+                {isActive && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div ref={menuRef} className="relative z-30">
+    <div className="relative z-30">
       {/* ─── Trigger Button ─── */}
       <button
+        ref={triggerRef}
         onClick={() => setOpen((v) => !v)}
         className={`
           flex items-center justify-center
@@ -133,92 +252,8 @@ export function SettingsMenu() {
         <Settings className={`h-[18px] w-[18px] transition-transform duration-300 ${open ? 'rotate-90' : ''}`} />
       </button>
 
-      {/* ─── Dropdown Menu ─── */}
-      {open && (
-        <div
-          className="absolute end-0 top-[calc(100%+8px)] w-56
-            glass rounded-2xl
-            shadow-xl
-            animate-scale-in origin-top-right
-            overflow-hidden
-            z-30"
-        >
-          {/* Language Section */}
-          <div className="px-3 pt-3 pb-1">
-            <div className="flex items-center gap-2 px-1 pb-2">
-              <Globe className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-                {t('settings.language')}
-              </span>
-            </div>
-            <div className="flex gap-1.5">
-              {languageOptions.map((lang) => {
-                const isActive = currentLocale === lang.id;
-                return (
-                  <button
-                    key={lang.id}
-                    onClick={() => switchLocale(lang.id)}
-                    className={`
-                      flex-1 flex items-center justify-center gap-1.5
-                      py-2 rounded-xl text-sm font-medium
-                      transition-all duration-200 ease-out
-                      cursor-pointer
-                      ${isActive
-                        ? 'text-[var(--color-text-on-primary)] shadow-md'
-                        : 'bg-[var(--color-primary-50)] text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-100)]'
-                      }
-                    `}
-                    style={isActive ? { background: 'var(--gradient-primary)' } : undefined}
-                  >
-                    {isActive && <Check className="h-3 w-3" />}
-                    {lang.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="section-divider mx-3 my-2" />
-
-          {/* Theme Section */}
-          <div className="px-3 pt-1 pb-3">
-            <div className="flex items-center gap-2 px-1 pb-2">
-              <Sun className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-                {t('settings.theme')}
-              </span>
-            </div>
-            <div className="flex flex-col gap-1">
-              {themeOptions.map(({ id, icon: Icon, label }) => {
-                const isActive = currentTheme === id;
-                return (
-                  <button
-                    key={id}
-                    onClick={() => handleThemeChange(id)}
-                    className={`
-                      flex items-center gap-3
-                      w-full px-3 py-2.5 rounded-xl
-                      text-sm font-medium
-                      transition-all duration-200 ease-out
-                      cursor-pointer
-                      ${isActive
-                        ? 'text-[var(--color-text-on-primary)] shadow-md'
-                        : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-50)]'
-                      }
-                    `}
-                    style={isActive ? { background: 'var(--gradient-primary)' } : undefined}
-                  >
-                    <Icon className="h-4 w-4 flex-shrink-0" />
-                    <span className="flex-1 text-start">{label}</span>
-                    {isActive && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ─── Dropdown via Portal ─── */}
+      {open && createPortal(dropdownContent, document.body)}
     </div>
   );
 }

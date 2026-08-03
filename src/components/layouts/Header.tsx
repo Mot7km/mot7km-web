@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslations, useLocale } from 'next-intl';
 import {
   UtensilsCrossed,
@@ -8,6 +9,7 @@ import {
   MapPin,
   Clock,
   Mail,
+  Share2,
   ExternalLink,
 } from 'lucide-react';
 import { SettingsMenu } from '@/components/common/SettingsMenu';
@@ -49,8 +51,85 @@ function formatTime(time24: string): string {
   return `${hour12}:${m.toString().padStart(2, '0')} ${suffix}`;
 }
 
+// ─── Popover with smart viewport-aware positioning ───
+function Popover({
+  trigger,
+  children,
+  open,
+  onToggle,
+}: {
+  trigger: React.ReactNode;
+  children: React.ReactNode;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  const popoverWidth = 240; // matches w-60 (15rem = 240px)
+  const popoverMaxHeight = 'calc(100vh - 120px)'; // leave some margin
+
+  useEffect(() => {
+    if (!open) return;
+    const updatePosition = () => {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      // Start with popover below trigger, right-aligned with trigger's right edge
+      let left = rect.right - popoverWidth + window.scrollX;
+      let top = rect.bottom + window.scrollY + 8; // 8px gap
+
+      // Clamp horizontal position to stay within viewport
+      const margin = 8;
+      const minLeft = margin;
+      const maxLeft = window.innerWidth - popoverWidth - margin;
+      left = Math.max(minLeft, Math.min(left, maxLeft));
+
+      // Clamp vertical position to prevent going off-screen (but we'll also set max-height)
+      // We'll just ensure top is at least margin from top
+      top = Math.max(margin + window.scrollY, top);
+
+      // If the popover would go below the viewport, we could flip it above,
+      // but we rely on max-height and scroll instead.
+      // Optionally, we could also set top to be above trigger if there's more space above.
+      // For simplicity, we keep it below with scroll.
+
+      setPosition({ top, left });
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [open]);
+
+  return (
+    <div className="relative inline-block">
+      <div ref={triggerRef} onClick={onToggle} className="cursor-pointer">
+        {trigger}
+      </div>
+      {open &&
+        createPortal(
+          <div
+            className="fixed w-60 max-h-[calc(100vh-120px)] overflow-y-auto rounded-2xl glass shadow-xl p-3 z-[9999] animate-scale-in origin-top-right"
+            style={{
+              top: position.top,
+              left: position.left,
+            }}
+          >
+            {children}
+          </div>,
+          document.body
+        )}
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════════
-// HEADER – beautifully responsive, no jamming, no forced full‑width rows
+// HEADER
 // ═══════════════════════════════════════════════════════════════════
 export function Header() {
   const t = useTranslations();
@@ -58,6 +137,7 @@ export function Header() {
   const isRTL = locale === 'ar';
 
   const [open, setOpen] = useState(true);
+  const [popoverOpen, setPopoverOpen] = useState<string | null>(null);
 
   useEffect(() => {
     setOpen(isStoreOpen());
@@ -65,12 +145,115 @@ export function Header() {
     return () => clearInterval(timer);
   }, []);
 
-  const todayHours = getTodayHours();
   const displayAddress = isRTL ? storeInfo.addressAr : storeInfo.address;
+
+  const togglePopover = (id: string) => {
+    setPopoverOpen((prev) => (prev === id ? null : id));
+  };
+
+  // ── Build weekly schedule ──
+  const weekDayNumbers = [0, 1, 2, 3, 4, 5, 6];
+  const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+  const openingHoursContent = (
+    <>
+      <div className="flex items-center gap-2 px-1 pb-2">
+        <Clock className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          {t('storeInfo.openingHours')}
+        </span>
+      </div>
+      <div className="space-y-1.5">
+        {weekDayNumbers.map((dayNum) => {
+          const dayLabel = t(`days.${dayKeys[dayNum]}`);
+          const entry = storeInfo.workingHours.find((wh) => wh.day === dayNum);
+          return (
+            <div key={dayNum} className="flex justify-between text-sm">
+              <span className="capitalize text-[var(--color-text-secondary)]">{dayLabel}</span>
+              {entry ? (
+                <span className="font-medium text-[var(--color-text-primary)]">
+                  {formatTime(entry.open)} – {formatTime(entry.close)}
+                </span>
+              ) : (
+                <span className="text-[var(--color-text-muted)]">{t('storeInfo.closed')}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+
+  const socialContent = (
+    <>
+      <div className="flex items-center gap-2 px-1 pb-2">
+        <Share2 className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          {t('storeInfo.socials')}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {storeInfo.socials.map((social) => (
+          <a
+            key={social.platform}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-full bg-[var(--color-primary-50)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-100)] transition-colors"
+            style={{ color: socialColorMap[social.platform] || 'currentColor' }}
+          >
+            <SocialIcon platform={social.platform} className="w-4 h-4" />
+            <span className="capitalize">{social.platform}</span>
+          </a>
+        ))}
+      </div>
+    </>
+  );
+
+  // ─── Reusable content helper with optional values ───
+  const simpleContent = (
+    icon: React.ReactNode,
+    label: string,
+    value?: string | null,
+    href?: string | null
+  ) => (
+    <>
+      <div className="flex items-center gap-2 px-1 pb-2">
+        {icon}
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          {label}
+        </span>
+      </div>
+      {value ? (
+        href ? (
+          <a
+            href={href}
+            target={href.startsWith('http') ? '_blank' : undefined}
+            rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            className="flex items-center gap-1 text-sm font-medium text-[var(--color-text-primary)] hover:text-[var(--color-primary)] transition-colors"
+          >
+            {value}
+            {href.startsWith('http') && <ExternalLink size={12} />}
+          </a>
+        ) : (
+          <span className="text-sm font-medium text-[var(--color-text-primary)]">{value}</span>
+        )
+      ) : (
+        <span className="text-sm text-[var(--color-text-muted)]">Not available</span>
+      )}
+    </>
+  );
+
+  // ─── Icon button ───
+  const iconButton = (icon: React.ReactNode) => (
+    <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors group">
+      {icon}
+    </div>
+  );
 
   return (
     <header
-      className="relative flex min-h-[38vh] sm:min-h-[44vh] lg:min-h-[48vh] w-full flex-col items-start justify-end rounded-b-[2rem] sm:rounded-b-[2.5rem] overflow-hidden py-4"
+      className="relative flex w-full flex-col items-center justify-center rounded-b-[2rem] sm:rounded-b-[2.5rem] overflow-hidden pt-8 sm:pt-10 pb-6 sm:pb-8 px-4 sm:px-6 lg:px-8"
       style={{
         background: 'var(--gradient-hero)',
         backgroundSize: '200% 200%',
@@ -80,11 +263,9 @@ export function Header() {
       {/* ── Decorative layers ── */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/20" />
-        <div className="absolute -top-20 -end-20 w-72 h-72 rounded-full bg-[var(--color-accent)]/20 opacity-60 animate-orb-1" />
-        <div className="absolute -bottom-16 -start-16 w-56 h-56 rounded-full bg-[var(--color-primary)]/25 opacity-50 animate-orb-2" />
-        <div className="absolute top-1/2 start-1/3 w-40 h-40 rounded-full bg-[var(--color-secondary)]/15 opacity-40 animate-breathe" />
-        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'1\'/%3E%3C/svg%3E")' }} />
-        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/15 to-transparent" />
+        <div className="absolute -top-20 -end-20 w-64 h-64 rounded-full bg-[var(--color-accent)]/20 opacity-60 animate-orb-1" />
+        <div className="absolute -bottom-12 -start-12 w-48 h-48 rounded-full bg-[var(--color-primary)]/25 opacity-50 animate-orb-2" />
+        <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-black/10 to-transparent" />
       </div>
 
       {/* ── Settings gear ── */}
@@ -93,12 +274,12 @@ export function Header() {
       </div>
 
       {/* ── Main Content ── */}
-      <div className="relative z-10 flex flex-col items-start px-4 pb-5 sm:px-6 sm:pb-7 md:pb-9 lg:px-8 lg:pb-11 w-full">
-        {/* ── Row 1: Logo + Status ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 w-full animate-fade-in-up">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 w-full max-w-7xl mx-auto">
+        {/* Left side: Logo + Brand */}
+        <div className="flex items-center gap-4 sm:gap-6 flex-1 min-w-[200px]">
           <div
-            className="flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24
-              items-center justify-center rounded-2xl
+            className="flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16
+              items-center justify-center rounded-lg
               border border-white/30 bg-white/15 backdrop-blur-md
               shadow-[0_8px_32px_rgba(0,0,0,0.15)]
               transition-all duration-300 hover:scale-105 hover:border-white/50
@@ -107,137 +288,86 @@ export function Header() {
           >
             <UtensilsCrossed
               strokeWidth={2.2}
-              className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 drop-shadow-lg text-white"
+              className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 drop-shadow-lg text-white"
             />
           </div>
-
-          <div className="flex flex-col items-start gap-1">
-            <div
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider border
-                ${open
-                  ? 'bg-[var(--color-success)]/20 text-[var(--color-success)] border-[var(--color-success)]/30'
-                  : 'bg-[var(--color-error)]/20 text-[var(--color-error)] border-[var(--color-error)]/30'
-                }`}
+          <div className="flex flex-col">
+            <h1
+              className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white drop-shadow-xl tracking-tight"
+              style={{
+                fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif',
+                textShadow: '0 2px 16px rgba(0,0,0,0.3)',
+              }}
             >
-              <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
-                <span
-                  className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${open ? 'bg-[var(--color-success)] animate-ping' : 'bg-[var(--color-error)]'}`}
-                />
-                <span
-                  className={`relative inline-flex h-full w-full rounded-full ${open ? 'bg-[var(--color-success)]' : 'bg-[var(--color-error)]'}`}
-                />
-              </span>
-              {open ? t('storeInfo.open') : t('storeInfo.closed')}
-            </div>
-            {todayHours && (
-              <div className="flex items-center gap-1 text-[10px] sm:text-xs text-white/80 font-medium">
-                <Clock size={12} className="text-white/60 sm:h-3.5 sm:w-3.5" />
-                <span>{formatTime(todayHours.open)} – {formatTime(todayHours.close)}</span>
-              </div>
-            )}
+              {t('common.brandName')}
+            </h1>
+            <p className="text-xs sm:text-sm md:text-base font-medium text-white/90 drop-shadow-md -mt-0.5">
+              {t('header.tagline')}
+            </p>
+            <div className="mt-2 h-0.5 w-12 sm:w-16 rounded-full bg-gradient-to-r from-white/80 to-transparent shadow-[0_0_12px_rgba(255,255,255,0.3)] animate-fade-in" />
           </div>
         </div>
 
-        {/* ── Brand name ── */}
-        <h1
-          className="mt-3 sm:mt-4 md:mt-5 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl
-            font-extrabold text-white drop-shadow-xl tracking-tight
-            animate-fade-in-up stagger-1"
-          style={{
-            fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif',
-            textShadow: '0 2px 16px rgba(0,0,0,0.3)',
-          }}
-        >
-          {t('common.brandName')}
-        </h1>
-
-        {/* ── Tagline ── */}
-        <p className="mt-0.5 sm:mt-1 max-w-xs sm:max-w-md text-xs sm:text-sm md:text-base lg:text-lg
-          font-medium text-white/90 drop-shadow-md
-          animate-fade-in-up stagger-2">
-          {t('header.tagline')}
-        </p>
-
-        {/* ── Shimmer line ── */}
-        <div className="mt-3 sm:mt-4 h-0.5 w-12 sm:w-16 rounded-full bg-gradient-to-r from-white/80 to-transparent
-          shadow-[0_0_12px_rgba(255,255,255,0.3)] animate-fade-in stagger-3" />
-
-        {/* ── CONTACT INFO – glass card with flexible row ── */}
-        <div className="mt-4 sm:mt-5 w-full animate-fade-in-up stagger-4">
-          <div
-            className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-3 sm:p-4
-              shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all"
+        {/* Right side: Icon bar */}
+        <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap sm:mt-3 ml-15">
+          <Popover
+            open={popoverOpen === 'phone'}
+            onToggle={() => togglePopover('phone')}
+            trigger={iconButton(<Phone size={15} className="group-hover:scale-110 transition-transform" />)}
           >
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
-              {/* Phone */}
-              <a
-                href={`tel:${storeInfo.phone}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-                  bg-white/10 border border-white/10
-                  text-white/90 text-xs font-medium
-                  hover:bg-white/20 transition-colors"
-              >
-                <Phone size={14} className="text-white/70 flex-shrink-0" />
-                <span dir="ltr" className="font-mono">{storeInfo.phone}</span>
-              </a>
+            {simpleContent(
+              <Phone className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
+              t('storeInfo.phone'),
+              storeInfo.phone,
+              storeInfo.phone ? `tel:${storeInfo.phone}` : null
+            )}
+          </Popover>
 
-              {/* Email */}
-              {storeInfo.email && (
-                <a
-                  href={`mailto:${storeInfo.email}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-                    bg-white/10 border border-white/10
-                    text-white/90 text-xs font-medium
-                    hover:bg-white/20 transition-colors"
-                >
-                  <Mail size={14} className="text-white/70 flex-shrink-0" />
-                  <span>{storeInfo.email}</span>
-                </a>
-              )}
+          <Popover
+            open={popoverOpen === 'email'}
+            onToggle={() => togglePopover('email')}
+            trigger={iconButton(<Mail size={15} className="group-hover:scale-110 transition-transform" />)}
+          >
+            {simpleContent(
+              <Mail className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
+              t('storeInfo.email'),
+              storeInfo.email,
+              storeInfo.email ? `mailto:${storeInfo.email}` : null
+            )}
+          </Popover>
 
-              {/* Address */}
-              <a
-                href={storeInfo.mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-                  bg-white/10 border border-white/10
-                  text-white/90 text-xs font-medium
-                  hover:bg-white/20 transition-colors"
-              >
-                <MapPin size={14} className="text-white/70 flex-shrink-0" />
-                <span className="break-words">{displayAddress}</span>
-                <ExternalLink size={12} className="opacity-50 flex-shrink-0" />
-              </a>
+          <Popover
+            open={popoverOpen === 'address'}
+            onToggle={() => togglePopover('address')}
+            trigger={iconButton(<MapPin size={15} className="group-hover:scale-110 transition-transform" />)}
+          >
+            {simpleContent(
+              <MapPin className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
+              t('storeInfo.address'),
+              displayAddress,
+              displayAddress ? storeInfo.mapUrl : null
+            )}
+          </Popover>
 
-              {/* Socials – pushed right on larger screens */}
-              <div className="flex items-center gap-1.5 sm:ml-auto">
-                {storeInfo.socials.map((social) => (
-                  <a
-                    key={social.platform}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center w-8 h-8 rounded-full
-                      bg-white/10 border border-white/10
-                      hover:bg-white/20 hover:scale-110 active:scale-95
-                      transition-all duration-300 group"
-                    aria-label={social.platform}
-                    style={{ '--social-color': socialColorMap[social.platform] } as React.CSSProperties}
-                  >
-                    <SocialIcon
-                      platform={social.platform}
-                      className="w-4 h-4 text-white/80 group-hover:text-[var(--social-color)] transition-colors"
-                    />
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
+          <Popover
+            open={popoverOpen === 'hours'}
+            onToggle={() => togglePopover('hours')}
+            trigger={iconButton(<Clock size={15} className="group-hover:scale-110 transition-transform" />)}
+          >
+            {openingHoursContent}
+          </Popover>
+
+          <Popover
+            open={popoverOpen === 'socials'}
+            onToggle={() => togglePopover('socials')}
+            trigger={iconButton(<Share2 size={15} className="group-hover:scale-110 transition-transform" />)}
+          >
+            {socialContent}
+          </Popover>
         </div>
       </div>
 
-      {/* ── Shimmer overlay sweep ── */}
+      {/* ── Shimmer overlay ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
           className="absolute top-0 left-0 w-1/3 h-full

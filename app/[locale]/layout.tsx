@@ -5,7 +5,6 @@ import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Providers } from "@/components/providers";
 import { i18n } from "@/config/i18n";
-import { Footer } from "@/components/layouts/Footer"
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -67,9 +66,7 @@ export default async function LocaleLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <main className="flex flex-1 flex-col">
-              {children}
-            </main>
+            {children}
           </Providers>
         </NextIntlClientProvider>
       </body>

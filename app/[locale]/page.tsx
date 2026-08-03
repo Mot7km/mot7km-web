@@ -7,7 +7,7 @@ import Categories from '@/components/features/PromotionalCategories';
 import ListContainer from '@/components/common/ListContainer';
 import SearchBar from '@/components/common/SearchBar';
 import { allProducts } from '@/data/menu';
-
+import { PageShell } from '@/components/layouts/PageShell';
 
 export default function Home() {
   const t = useTranslations();
@@ -21,11 +21,11 @@ export default function Home() {
     return [
       { id: 'All', label: t('common.all'), image: 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=200&q=80' },
       ...derivedCategories.map((category) => {
-        const firstProduct = allProducts.find(p => p.category === category);
+        const firstProduct = allProducts.find((p) => p.category === category);
         return {
           id: category,
           label: category,
-          image: firstProduct?.image || 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=200&q=80'
+          image: firstProduct?.image || 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=200&q=80',
         };
       }),
     ];
@@ -50,7 +50,6 @@ export default function Home() {
     });
   }, [activeCategory, normalizedQuery]);
 
-  // Build sections for ListContainer
   const sections = useMemo(() => {
     const result = [];
     result.push({
@@ -65,10 +64,9 @@ export default function Home() {
   }, [filteredProducts, t]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-
-      {/* ─────── PROMOTIONAL CAROUSEL ─────── */}
-      <section className="section-glow relative w-full px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8">
+    <PageShell showHeader showFooter>
+      <div className="flex flex-col items-center justify-center">
+        <section className="section-glow relative w-full px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
           <h2
             className="accent-line mb-6 text-2xl font-bold text-[var(--color-text-primary)] sm:text-3xl"
@@ -80,14 +78,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─────── GRADIENT DIVIDER ─────── */}
       <div className="section-divider-premium w-full max-w-3xl mx-auto" />
 
-      {/* ─────── STICKY SEARCH + CATEGORIES + PRODUCT LIST ─────── */}
       <section className="section-glow relative w-full px-4 pb-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl md:max-w-6xl">
           <div className="relative">
-            {/* Sticky Search & Categories */}
             <div className="sticky top-0 z-30 bg-[var(--color-background)]/90 backdrop-blur-xl border-b border-[var(--color-border)]/50 pt-3 pb-1 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 mb-6 shadow-sm transition-all duration-300">
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
               <div className="flex w-full justify-center pt-1 pb-2">
@@ -99,13 +94,11 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Product list */}
             <ListContainer sections={sections} />
           </div>
         </div>
       </section>
-
-
-    </div>
+      </div>
+    </PageShell>
   );
 }
