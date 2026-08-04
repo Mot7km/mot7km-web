@@ -59,6 +59,9 @@
     "dark": "Dark",
     "system": "System"
   },
+  "loading": {
+    "switchingLanguage": "Switching language…"
+  },
   "reviews": {
     "title": "Reviews",
     "noReviews": "No reviews yet.",
@@ -84,7 +87,7 @@
     "addToCart": "Add to Cart"
   },
   "storeInfo": {
-    "open": "Open Now",
+    "open": "Open",
     "closed": "Closed",
     "phone": "Phone",
     "address": "Address",

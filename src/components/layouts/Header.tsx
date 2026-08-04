@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslations, useLocale } from 'next-intl';
+import { useTheme } from '@/hooks/useTheme';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   UtensilsCrossed,
   Phone,
@@ -11,11 +13,33 @@ import {
   Mail,
   Share2,
   ExternalLink,
+  Settings,
+  Sun,
+  Moon,
+  Monitor,
+  Globe,
+  Check,
 } from 'lucide-react';
-import { SettingsMenu } from '@/components/common/SettingsMenu';
-import { storeInfo, isStoreOpen, getTodayHours } from '@/data/storeInfo';
+import { storeInfo, isStoreOpen } from '@/data/storeInfo';
+import { THEME_STORAGE_KEY } from '@/config/theme';
+import { i18n } from '@/config/i18n';
+import { useLocaleTransition } from '@/context/LocaleTransitionContext';
 
-// ─── Social Icon ───
+// ─── Helpers ───────────────────────────────────────────────
+function formatTime(time24: string): string {
+  const [h, m] = time24.split(':').map(Number);
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  const hour12 = h % 12 || 12;
+  return `${hour12}:${m.toString().padStart(2, '0')} ${suffix}`;
+}
+
+const socialColorMap: Record<string, string> = {
+  whatsapp: '#25D366',
+  instagram: '#E4405F',
+  facebook: '#1877F2',
+  tiktok: '#000000',
+};
+
 function SocialIcon({ platform, className }: { platform: string; className?: string }) {
   const paths: Record<string, string> = {
     whatsapp:
@@ -27,7 +51,6 @@ function SocialIcon({ platform, className }: { platform: string; className?: str
     tiktok:
       'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z',
   };
-
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
       <path d={paths[platform] || ''} />
@@ -35,23 +58,7 @@ function SocialIcon({ platform, className }: { platform: string; className?: str
   );
 }
 
-// ─── Social colour map ───
-const socialColorMap: Record<string, string> = {
-  whatsapp: '#25D366',
-  instagram: '#E4405F',
-  facebook: '#1877F2',
-  tiktok: '#000000',
-};
-
-// ─── Helper: format "HH:mm" to 12-hour ───
-function formatTime(time24: string): string {
-  const [h, m] = time24.split(':').map(Number);
-  const suffix = h >= 12 ? 'PM' : 'AM';
-  const hour12 = h % 12 || 12;
-  return `${hour12}:${m.toString().padStart(2, '0')} ${suffix}`;
-}
-
-// ─── Popover with smart viewport-aware positioning ───
+// ─── Shared Popover ────────────────────────────────────────
 function Popover({
   trigger,
   children,
@@ -64,10 +71,10 @@ function Popover({
   onToggle: () => void;
 }) {
   const triggerRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
-  const popoverWidth = 240; // matches w-60 (15rem = 240px)
-  const popoverMaxHeight = 'calc(100vh - 120px)'; // leave some margin
+  const popoverWidth = 240; // w-60
 
   useEffect(() => {
     if (!open) return;
@@ -75,36 +82,51 @@ function Popover({
       const rect = triggerRef.current?.getBoundingClientRect();
       if (!rect) return;
 
-      // Start with popover below trigger, right-aligned with trigger's right edge
       let left = rect.right - popoverWidth + window.scrollX;
-      let top = rect.bottom + window.scrollY + 8; // 8px gap
+      let top = rect.bottom + window.scrollY + 8;
 
-      // Clamp horizontal position to stay within viewport
       const margin = 8;
       const minLeft = margin;
       const maxLeft = window.innerWidth - popoverWidth - margin;
       left = Math.max(minLeft, Math.min(left, maxLeft));
 
-      // Clamp vertical position to prevent going off-screen (but we'll also set max-height)
-      // We'll just ensure top is at least margin from top
       top = Math.max(margin + window.scrollY, top);
-
-      // If the popover would go below the viewport, we could flip it above,
-      // but we rely on max-height and scroll instead.
-      // Optionally, we could also set top to be above trigger if there's more space above.
-      // For simplicity, we keep it below with scroll.
-
       setPosition({ top, left });
     };
 
     updatePosition();
     window.addEventListener('resize', updatePosition);
-    window.addEventListener('scroll', updatePosition, true);
-    return () => {
-      window.removeEventListener('resize', updatePosition);
-      window.removeEventListener('scroll', updatePosition, true);
-    };
+    return () => window.removeEventListener('resize', updatePosition);
   }, [open]);
+
+  // Close on scroll (unless inside popover)
+  useEffect(() => {
+    if (!open) return;
+    const handleScroll = (e: Event) => {
+      const target = e.target as Node;
+      if (popoverRef.current?.contains(target)) return;
+      onToggle();
+    };
+    window.addEventListener('scroll', handleScroll, true);
+    return () => window.removeEventListener('scroll', handleScroll, true);
+  }, [open, onToggle]);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        triggerRef.current?.contains(target) ||
+        popoverRef.current?.contains(target)
+      ) {
+        return;
+      }
+      onToggle();
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open, onToggle]);
 
   return (
     <div className="relative inline-block">
@@ -114,6 +136,7 @@ function Popover({
       {open &&
         createPortal(
           <div
+            ref={popoverRef}
             className="fixed w-60 max-h-[calc(100vh-120px)] overflow-y-auto rounded-2xl glass shadow-xl p-3 z-[9999] animate-scale-in origin-top-right"
             style={{
               top: position.top,
@@ -128,9 +151,185 @@ function Popover({
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// HEADER
-// ═══════════════════════════════════════════════════════════════════
+// ─── Settings Content (reused by SettingsMenu) ────────────
+function SettingsContent() {
+  const t = useTranslations();
+  const { theme, setTheme } = useTheme();
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
+  const { startLocaleTransition } = useLocaleTransition();
+
+  const currentTheme = theme || 'system';
+
+  const applyTheme = (name: 'light' | 'dark' | 'system') => {
+    try {
+      if (name === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', prefersDark);
+      } else {
+        document.documentElement.classList.toggle('dark', name === 'dark');
+      }
+      localStorage.setItem(THEME_STORAGE_KEY, name);
+    } catch (e) {}
+  };
+
+  const handleThemeChange = (mode: 'light' | 'dark' | 'system') => {
+    setTheme(mode);
+    applyTheme(mode);
+  };
+
+  const segments = pathname.split('/').filter(Boolean);
+  const currentLocale = segments[0] && i18n.locales.includes(segments[0] as (typeof i18n.locales)[number])
+    ? segments[0]
+    : locale;
+
+  const getLocalizedPath = (newLocale: string) => {
+    const segs = pathname.split('/').filter(Boolean);
+    const hasLocalePrefix = segs[0] && i18n.locales.includes(segs[0] as (typeof i18n.locales)[number]);
+    if (hasLocalePrefix) {
+      segs[0] = newLocale;
+    } else {
+      segs.unshift(newLocale);
+    }
+    return `/${segs.join('/')}`;
+  };
+
+  const switchLocale = (newLocale: string) => {
+    if (newLocale === currentLocale) return;
+    startLocaleTransition();
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax; Secure`;
+    router.push(getLocalizedPath(newLocale));
+    router.refresh();
+  };
+
+  const themeOptions = [
+    { id: 'light' as const, icon: Sun, label: t('settings.light') },
+    { id: 'dark' as const, icon: Moon, label: t('settings.dark') },
+    { id: 'system' as const, icon: Monitor, label: t('settings.system') },
+  ];
+
+  const languageOptions = i18n.locales.map((loc) => ({
+    id: loc,
+    label: loc === 'en' ? t('languages.en') : t('languages.ar'),
+  }));
+
+  return (
+    <>
+      {/* Language */}
+      <div className="px-3 pt-3 pb-1">
+        <div className="flex items-center gap-2 px-1 pb-2">
+          <Globe className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+            {t('settings.language')}
+          </span>
+        </div>
+        <div className="flex gap-1.5">
+          {languageOptions.map((lang) => {
+            const isActive = currentLocale === lang.id;
+            return (
+              <button
+                key={lang.id}
+                onClick={() => switchLocale(lang.id)}
+                className={`
+                  flex-1 flex items-center justify-center gap-1.5
+                  py-2 rounded-xl text-sm font-medium
+                  transition-all duration-200 ease-out
+                  cursor-pointer
+                  ${isActive
+                    ? 'text-[var(--color-text-on-primary)] shadow-md'
+                    : 'bg-[var(--color-primary-50)] text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-100)]'
+                  }
+                `}
+                style={isActive ? { background: 'var(--gradient-primary)' } : undefined}
+              >
+                {isActive && <Check className="h-3 w-3" />}
+                {lang.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="section-divider mx-3 my-2" />
+
+      {/* Theme */}
+      <div className="px-3 pt-1 pb-3">
+        <div className="flex items-center gap-2 px-1 pb-2">
+          <Sun className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+            {t('settings.theme')}
+          </span>
+        </div>
+        <div className="flex flex-col gap-1">
+          {themeOptions.map(({ id, icon: Icon, label }) => {
+            const isActive = currentTheme === id;
+            return (
+              <button
+                key={id}
+                onClick={() => handleThemeChange(id)}
+                className={`
+                  flex items-center gap-3
+                  w-full px-3 py-2.5 rounded-xl
+                  text-sm font-medium
+                  transition-all duration-200 ease-out
+                  cursor-pointer
+                  ${isActive
+                    ? 'text-[var(--color-text-on-primary)] shadow-md'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-50)]'
+                  }
+                `}
+                style={isActive ? { background: 'var(--gradient-primary)' } : undefined}
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                <span className="flex-1 text-start">{label}</span>
+                {isActive && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── SettingsMenu (self‑contained, uses shared Popover) ──
+export function SettingsMenu() {
+  const t = useTranslations();
+  const [open, setOpen] = useState(false);
+
+  // The trigger is a styled div (the gear icon). The wrapper in Popover handles the click.
+  const trigger = (
+    <div
+      className={`
+        flex items-center justify-center
+        w-10 h-10 rounded-full
+        transition-all duration-250 ease-out
+        cursor-pointer
+        hover:scale-105 active:scale-95
+        ${open
+          ? 'text-white shadow-lg'
+          : 'glass text-white/80 hover:text-white'
+        }
+      `}
+      style={open ? { background: 'var(--gradient-primary)' } : undefined}
+      role="button"
+      tabIndex={0}
+      aria-label={t('settings.title')}
+      aria-expanded={open}
+    >
+      <Settings className={`h-[18px] w-[18px] transition-transform duration-300 ${open ? 'rotate-90' : ''}`} />
+    </div>
+  );
+
+  return (
+    <Popover trigger={trigger} open={open} onToggle={() => setOpen(!open)}>
+      <SettingsContent />
+    </Popover>
+  );
+}
+
+// ─── Header ────────────────────────────────────────────────
 export function Header() {
   const t = useTranslations();
   const locale = useLocale();
@@ -151,66 +350,7 @@ export function Header() {
     setPopoverOpen((prev) => (prev === id ? null : id));
   };
 
-  // ── Build weekly schedule ──
-  const weekDayNumbers = [0, 1, 2, 3, 4, 5, 6];
-  const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
-  const openingHoursContent = (
-    <>
-      <div className="flex items-center gap-2 px-1 pb-2">
-        <Clock className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-          {t('storeInfo.openingHours')}
-        </span>
-      </div>
-      <div className="space-y-1.5">
-        {weekDayNumbers.map((dayNum) => {
-          const dayLabel = t(`days.${dayKeys[dayNum]}`);
-          const entry = storeInfo.workingHours.find((wh) => wh.day === dayNum);
-          return (
-            <div key={dayNum} className="flex justify-between text-sm">
-              <span className="capitalize text-[var(--color-text-secondary)]">{dayLabel}</span>
-              {entry ? (
-                <span className="font-medium text-[var(--color-text-primary)]">
-                  {formatTime(entry.open)} – {formatTime(entry.close)}
-                </span>
-              ) : (
-                <span className="text-[var(--color-text-muted)]">{t('storeInfo.closed')}</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
-
-  const socialContent = (
-    <>
-      <div className="flex items-center gap-2 px-1 pb-2">
-        <Share2 className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-          {t('storeInfo.socials')}
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {storeInfo.socials.map((social) => (
-          <a
-            key={social.platform}
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-full bg-[var(--color-primary-50)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-100)] transition-colors"
-            style={{ color: socialColorMap[social.platform] || 'currentColor' }}
-          >
-            <SocialIcon platform={social.platform} className="w-4 h-4" />
-            <span className="capitalize">{social.platform}</span>
-          </a>
-        ))}
-      </div>
-    </>
-  );
-
-  // ─── Reusable content helper with optional values ───
+  // ─── Reusable content builder ───
   const simpleContent = (
     icon: React.ReactNode,
     label: string,
@@ -244,11 +384,88 @@ export function Header() {
     </>
   );
 
-  // ─── Icon button ───
+  // ─── Icon button (for non‑settings icons) ───
   const iconButton = (icon: React.ReactNode) => (
     <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors group">
       {icon}
     </div>
+  );
+
+  // ─── Status indicator ───
+  const statusIndicator = (
+    <div
+      className={`flex items-center gap-2 px-2.5 py-1 rounded-full border backdrop-blur-sm transition-all
+        ${open
+          ? 'border-green-400/40 bg-green-500/10 text-green-300'
+          : 'border-red-400/40 bg-red-500/10 text-red-300'
+        }`}
+    >
+      <span
+        className={`inline-block w-2 h-2 rounded-full animate-pulse ${
+          open ? 'bg-green-400' : 'bg-red-400'
+        }`}
+      />
+      <span className="text-xs font-medium whitespace-nowrap">
+        {open ? t('storeInfo.open') : t('storeInfo.closed')}
+      </span>
+    </div>
+  );
+
+  // ─── Popover contents (hours & socials) ───
+  const openingHoursContent = (
+    <>
+      <div className="flex items-center gap-2 px-1 pb-2">
+        <Clock className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          {t('storeInfo.openingHours')}
+        </span>
+      </div>
+      <div className="space-y-1.5">
+        {[0, 1, 2, 3, 4, 5, 6].map((dayNum) => {
+          const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+          const dayLabel = t(`days.${dayKeys[dayNum]}`);
+          const entry = storeInfo.workingHours.find((wh) => wh.day === dayNum);
+          return (
+            <div key={dayNum} className="flex justify-between text-sm">
+              <span className="capitalize text-[var(--color-text-secondary)]">{dayLabel}</span>
+              {entry ? (
+                <span className="font-medium text-[var(--color-text-primary)]">
+                  {formatTime(entry.open)} – {formatTime(entry.close)}
+                </span>
+              ) : (
+                <span className="text-[var(--color-text-muted)]">{t('storeInfo.closed')}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+
+  const socialsContent = (
+    <>
+      <div className="flex items-center gap-2 px-1 pb-2">
+        <Share2 className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          {t('storeInfo.socials')}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {storeInfo.socials.map((social) => (
+          <a
+            key={social.platform}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-full bg-[var(--color-primary-50)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-100)] transition-colors"
+            style={{ color: socialColorMap[social.platform] || 'currentColor' }}
+          >
+            <SocialIcon platform={social.platform} className="w-4 h-4" />
+            <span className="capitalize">{social.platform}</span>
+          </a>
+        ))}
+      </div>
+    </>
   );
 
   return (
@@ -268,7 +485,7 @@ export function Header() {
         <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-black/10 to-transparent" />
       </div>
 
-      {/* ── Settings gear ── */}
+      {/* ── Settings gear (top-right, back where it belongs) ── */}
       <div className="absolute end-3 top-3 z-20 sm:end-5 sm:top-5">
         <SettingsMenu />
       </div>
@@ -292,15 +509,18 @@ export function Header() {
             />
           </div>
           <div className="flex flex-col">
-            <h1
-              className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white drop-shadow-xl tracking-tight"
-              style={{
-                fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif',
-                textShadow: '0 2px 16px rgba(0,0,0,0.3)',
-              }}
-            >
-              {t('common.brandName')}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1
+                className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white drop-shadow-xl tracking-tight leading-none"
+                style={{
+                  fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif',
+                  textShadow: '0 2px 16px rgba(0,0,0,0.3)',
+                }}
+              >
+                {t('common.brandName')}
+              </h1>
+              <div className="hidden lg:flex self-center">{statusIndicator}</div>
+            </div>
             <p className="text-xs sm:text-sm md:text-base font-medium text-white/90 drop-shadow-md -mt-0.5">
               {t('header.tagline')}
             </p>
@@ -308,7 +528,7 @@ export function Header() {
           </div>
         </div>
 
-        {/* Right side: Icon bar */}
+        {/* Right side: Icon bar (everything EXCEPT settings) */}
         <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap sm:mt-3 ml-15">
           <Popover
             open={popoverOpen === 'phone'}
@@ -362,9 +582,12 @@ export function Header() {
             onToggle={() => togglePopover('socials')}
             trigger={iconButton(<Share2 size={15} className="group-hover:scale-110 transition-transform" />)}
           >
-            {socialContent}
+            {socialsContent}
           </Popover>
         </div>
+
+        {/* Mobile status indicator */}
+        <div className="lg:hidden">{statusIndicator}</div>
       </div>
 
       {/* ── Shimmer overlay ── */}

@@ -5,6 +5,7 @@ import { ReactNode } from 'react';
 import { THEME_STORAGE_KEY } from '@/config/theme';
 import { CartProvider } from '@/context/CartContext';
 import { CartOverlay } from '@/components/cart/CartOverlay';
+import { LocaleTransitionProvider } from '@/context/LocaleTransitionContext';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -13,10 +14,12 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey={THEME_STORAGE_KEY}>
-      <CartProvider>
-        {children}
-        <CartOverlay />
-      </CartProvider>
+      <LocaleTransitionProvider>
+        <CartProvider>
+          {children}
+          <CartOverlay />
+        </CartProvider>
+      </LocaleTransitionProvider>
     </ThemeProvider>
   );
 }

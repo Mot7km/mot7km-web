@@ -59,6 +59,9 @@
     "dark": "داكن",
     "system": "النظام"
   },
+  "loading": {
+    "switchingLanguage": "جاري تبديل اللغة…"
+  },
   "reviews": {
     "title": "التقييمات",
     "noReviews": "لا توجد تقييمات حتى الآن.",
@@ -84,7 +87,7 @@
     "addToCart": "أضف للسلة"
   },
   "storeInfo": {
-    "open": "مفتوح الآن",
+    "open": "مفتوح",
     "closed": "مغلق",
     "phone": "الهاتف",
     "address": "العنوان",

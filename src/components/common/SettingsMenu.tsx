@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { THEME_STORAGE_KEY } from '@/config/theme';
 import { i18n } from '@/config/i18n';
 import { Settings, Sun, Moon, Monitor, Globe, Check } from 'lucide-react';
+import { useLocaleTransition } from '@/context/LocaleTransitionContext';
 
 export function SettingsMenu() {
   const t = useTranslations();
@@ -15,6 +16,7 @@ export function SettingsMenu() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const { startLocaleTransition } = useLocaleTransition();
 
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -121,6 +123,7 @@ export function SettingsMenu() {
 
   const switchLocale = (newLocale: string) => {
     if (newLocale === currentLocale) return;
+    startLocaleTransition();
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax; Secure`;
     router.push(getLocalizedPath(newLocale));
     router.refresh();
