@@ -87,14 +87,16 @@
     "addToCart": "Add to Cart"
   },
   "storeInfo": {
-    "open": "Open",
+    "open": "Open Now",
     "closed": "Closed",
     "phone": "Phone",
     "address": "Address",
     "email": "Email",
     "hours": "Working Hours",
     "todayHours": "Today's Hours",
-    "viewOnMap": "View on Map"
+    "viewOnMap": "View on Map",
+    "todayFromTo": "{from} – {to}",
+    "todayClosed": "today closed"
   },
   "cart": {
     "total": "Total",

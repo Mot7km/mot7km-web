@@ -11,7 +11,7 @@ import {
   MapPin,
   Clock,
   Mail,
-  Share2,
+  Users,
   ExternalLink,
   Settings,
   Sun,
@@ -26,11 +26,27 @@ import { i18n } from '@/config/i18n';
 import { useLocaleTransition } from '@/context/LocaleTransitionContext';
 
 // ─── Helpers ───────────────────────────────────────────────
-function formatTime(time24: string): string {
+
+// Format a time string (HH:mm) using the given locale
+function formatTimeLocalized(time24: string, locale: string): string {
   const [h, m] = time24.split(':').map(Number);
-  const suffix = h >= 12 ? 'PM' : 'AM';
-  const hour12 = h % 12 || 12;
-  return `${hour12}:${m.toString().padStart(2, '0')} ${suffix}`;
+  const date = new Date();
+  date.setHours(h, m, 0, 0);
+
+  // For Arabic, use 24-hour format; for others, keep 12-hour with AM/PM
+  const options: Intl.DateTimeFormatOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: locale === 'ar' ? false : true,
+  };
+  return new Intl.DateTimeFormat(locale, options).format(date);
+}
+
+// Get today's working hours from storeInfo
+function getTodayHours() {
+  const today = new Date().getDay(); // 0=Sunday, 6=Saturday
+  const entry = storeInfo.workingHours.find((wh) => wh.day === today);
+  return entry || null;
 }
 
 const socialColorMap: Record<string, string> = {
@@ -151,7 +167,7 @@ function Popover({
   );
 }
 
-// ─── Settings Content (reused by SettingsMenu) ────────────
+// ─── Settings Content ──────────────────────────────────────
 function SettingsContent() {
   const t = useTranslations();
   const { theme, setTheme } = useTheme();
@@ -293,32 +309,29 @@ function SettingsContent() {
   );
 }
 
-// ─── SettingsMenu (self‑contained, uses shared Popover) ──
+// ─── SettingsMenu ──────────────────────────────────────────
 export function SettingsMenu() {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
 
-  // The trigger is a styled div (the gear icon). The wrapper in Popover handles the click.
+  // --- FIX: gear icon now matches other icon buttons ---
   const trigger = (
     <div
       className={`
         flex items-center justify-center
-        w-10 h-10 rounded-full
+        w-8 h-8 sm:w-9 sm:h-9 rounded-full
+        bg-white/10 border border-white/20
+        text-white hover:bg-white/20
         transition-all duration-250 ease-out
-        cursor-pointer
-        hover:scale-105 active:scale-95
-        ${open
-          ? 'text-white shadow-lg'
-          : 'glass text-white/80 hover:text-white'
-        }
+        cursor-pointer hover:scale-105 active:scale-95
+        ${open ? 'bg-white/20' : ''}
       `}
-      style={open ? { background: 'var(--gradient-primary)' } : undefined}
       role="button"
       tabIndex={0}
       aria-label={t('settings.title')}
       aria-expanded={open}
     >
-      <Settings className={`h-[18px] w-[18px] transition-transform duration-300 ${open ? 'rotate-90' : ''}`} />
+      <Settings className={`h-[15px] w-[15px] transition-transform duration-300 ${open ? 'rotate-90' : ''}`} />
     </div>
   );
 
@@ -337,10 +350,15 @@ export function Header() {
 
   const [open, setOpen] = useState(true);
   const [popoverOpen, setPopoverOpen] = useState<string | null>(null);
+  const [todayHours, setTodayHours] = useState<{ open: string; close: string } | null>(null);
 
   useEffect(() => {
     setOpen(isStoreOpen());
-    const timer = setInterval(() => setOpen(isStoreOpen()), 60_000);
+    setTodayHours(getTodayHours());
+    const timer = setInterval(() => {
+      setOpen(isStoreOpen());
+      setTodayHours(getTodayHours());
+    }, 60_000);
     return () => clearInterval(timer);
   }, []);
 
@@ -350,7 +368,7 @@ export function Header() {
     setPopoverOpen((prev) => (prev === id ? null : id));
   };
 
-  // ─── Reusable content builder ───
+  // ─── Reusable content builder ────────────────────────────
   const simpleContent = (
     icon: React.ReactNode,
     label: string,
@@ -384,14 +402,14 @@ export function Header() {
     </>
   );
 
-  // ─── Icon button (for non‑settings icons) ───
+  // ─── Icon button ──────────────────────────────────────────
   const iconButton = (icon: React.ReactNode) => (
     <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors group">
       {icon}
     </div>
   );
 
-  // ─── Status indicator ───
+  // ─── Status indicator (reused) ──────────────────────────
   const statusIndicator = (
     <div
       className={`flex items-center gap-2 px-2.5 py-1 rounded-full border backdrop-blur-sm transition-all
@@ -407,45 +425,28 @@ export function Header() {
       />
       <span className="text-xs font-medium whitespace-nowrap">
         {open ? t('storeInfo.open') : t('storeInfo.closed')}
+        {todayHours && open && (
+          <span className="ml-1 opacity-80">
+            {t('storeInfo.todayFromTo', {
+              from: formatTimeLocalized(todayHours.open, locale),
+              to: formatTimeLocalized(todayHours.close, locale),
+            })}
+          </span>
+        )}
+        {todayHours && !open && (
+          <span className="ml-1 opacity-80">
+            {t('storeInfo.todayClosed')}
+          </span>
+        )}
       </span>
     </div>
   );
 
-  // ─── Popover contents (hours & socials) ───
-  const openingHoursContent = (
-    <>
-      <div className="flex items-center gap-2 px-1 pb-2">
-        <Clock className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-          {t('storeInfo.openingHours')}
-        </span>
-      </div>
-      <div className="space-y-1.5">
-        {[0, 1, 2, 3, 4, 5, 6].map((dayNum) => {
-          const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-          const dayLabel = t(`days.${dayKeys[dayNum]}`);
-          const entry = storeInfo.workingHours.find((wh) => wh.day === dayNum);
-          return (
-            <div key={dayNum} className="flex justify-between text-sm">
-              <span className="capitalize text-[var(--color-text-secondary)]">{dayLabel}</span>
-              {entry ? (
-                <span className="font-medium text-[var(--color-text-primary)]">
-                  {formatTime(entry.open)} – {formatTime(entry.close)}
-                </span>
-              ) : (
-                <span className="text-[var(--color-text-muted)]">{t('storeInfo.closed')}</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
-
+  // ─── Socials popover content ─────────────────────────────
   const socialsContent = (
     <>
       <div className="flex items-center gap-2 px-1 pb-2">
-        <Share2 className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
+        <Users className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />
         <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
           {t('storeInfo.socials')}
         </span>
@@ -485,14 +486,14 @@ export function Header() {
         <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-black/10 to-transparent" />
       </div>
 
-      {/* ── Settings gear (top-right, back where it belongs) ── */}
+      {/* ── Settings gear ── */}
       <div className="absolute end-3 top-3 z-20 sm:end-5 sm:top-5">
         <SettingsMenu />
       </div>
 
       {/* ── Main Content ── */}
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 w-full max-w-7xl mx-auto">
-        {/* Left side: Logo + Brand */}
+      <div className="relative z-10 flex flex-wrap items-start sm:items-center justify-between gap-4 w-full max-w-7xl mx-auto">
+        {/* Left side: Logo + Brand (with status indicator hidden on small screens) */}
         <div className="flex items-center gap-4 sm:gap-6 flex-1 min-w-[200px]">
           <div
             className="flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16
@@ -519,6 +520,7 @@ export function Header() {
               >
                 {t('common.brandName')}
               </h1>
+              {/* Status indicator – visible only on large screens */}
               <div className="hidden lg:flex self-center">{statusIndicator}</div>
             </div>
             <p className="text-xs sm:text-sm md:text-base font-medium text-white/90 drop-shadow-md -mt-0.5">
@@ -528,66 +530,61 @@ export function Header() {
           </div>
         </div>
 
-        {/* Right side: Icon bar (everything EXCEPT settings) */}
-        <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap sm:mt-3 ml-15">
-          <Popover
-            open={popoverOpen === 'phone'}
-            onToggle={() => togglePopover('phone')}
-            trigger={iconButton(<Phone size={15} className="group-hover:scale-110 transition-transform" />)}
-          >
-            {simpleContent(
-              <Phone className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
-              t('storeInfo.phone'),
-              storeInfo.phone,
-              storeInfo.phone ? `tel:${storeInfo.phone}` : null
-            )}
-          </Popover>
+        {/* Right side: Mobile status (above icons) + icons row */}
+        <div className="flex flex-col items-start gap-1 sm:gap-1.5 ml-15">
+          {/* Mobile status indicator – visible only on small screens, placed above icons */}
+          <div className="lg:hidden ">{statusIndicator}</div>
 
-          <Popover
-            open={popoverOpen === 'email'}
-            onToggle={() => togglePopover('email')}
-            trigger={iconButton(<Mail size={15} className="group-hover:scale-110 transition-transform" />)}
-          >
-            {simpleContent(
-              <Mail className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
-              t('storeInfo.email'),
-              storeInfo.email,
-              storeInfo.email ? `mailto:${storeInfo.email}` : null
-            )}
-          </Popover>
+          {/* Icons row */}
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap sm:mt-3">
+            <Popover
+              open={popoverOpen === 'phone'}
+              onToggle={() => togglePopover('phone')}
+              trigger={iconButton(<Phone size={15} className="group-hover:scale-110 transition-transform" />)}
+            >
+              {simpleContent(
+                <Phone className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
+                t('storeInfo.phone'),
+                storeInfo.phone,
+                storeInfo.phone ? `tel:${storeInfo.phone}` : null
+              )}
+            </Popover>
 
-          <Popover
-            open={popoverOpen === 'address'}
-            onToggle={() => togglePopover('address')}
-            trigger={iconButton(<MapPin size={15} className="group-hover:scale-110 transition-transform" />)}
-          >
-            {simpleContent(
-              <MapPin className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
-              t('storeInfo.address'),
-              displayAddress,
-              displayAddress ? storeInfo.mapUrl : null
-            )}
-          </Popover>
+            <Popover
+              open={popoverOpen === 'email'}
+              onToggle={() => togglePopover('email')}
+              trigger={iconButton(<Mail size={15} className="group-hover:scale-110 transition-transform" />)}
+            >
+              {simpleContent(
+                <Mail className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
+                t('storeInfo.email'),
+                storeInfo.email,
+                storeInfo.email ? `mailto:${storeInfo.email}` : null
+              )}
+            </Popover>
 
-          <Popover
-            open={popoverOpen === 'hours'}
-            onToggle={() => togglePopover('hours')}
-            trigger={iconButton(<Clock size={15} className="group-hover:scale-110 transition-transform" />)}
-          >
-            {openingHoursContent}
-          </Popover>
+            <Popover
+              open={popoverOpen === 'address'}
+              onToggle={() => togglePopover('address')}
+              trigger={iconButton(<MapPin size={15} className="group-hover:scale-110 transition-transform" />)}
+            >
+              {simpleContent(
+                <MapPin className="h-3.5 w-3.5 text-[var(--color-text-muted)]" />,
+                t('storeInfo.address'),
+                displayAddress,
+                displayAddress ? storeInfo.mapUrl : null
+              )}
+            </Popover>
 
-          <Popover
-            open={popoverOpen === 'socials'}
-            onToggle={() => togglePopover('socials')}
-            trigger={iconButton(<Share2 size={15} className="group-hover:scale-110 transition-transform" />)}
-          >
-            {socialsContent}
-          </Popover>
+            <Popover
+              open={popoverOpen === 'socials'}
+              onToggle={() => togglePopover('socials')}
+              trigger={iconButton(<Users size={15} className="group-hover:scale-110 transition-transform" />)}
+            >
+              {socialsContent}
+            </Popover>
+          </div>
         </div>
-
-        {/* Mobile status indicator */}
-        <div className="lg:hidden">{statusIndicator}</div>
       </div>
 
       {/* ── Shimmer overlay ── */}

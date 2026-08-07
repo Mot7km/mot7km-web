@@ -94,7 +94,9 @@
     "email": "البريد الإلكتروني",
     "hours": "مواعيد العمل",
     "todayHours": "مواعيد اليوم",
-    "viewOnMap": "عرض على الخريطة"
+    "viewOnMap": "عرض على الخريطة",
+    "todayFromTo": ": {from} – {to}",
+    "todayClosed": "اليوم مغلق"
   },
   "cart": {
     "total": "الإجمالي",

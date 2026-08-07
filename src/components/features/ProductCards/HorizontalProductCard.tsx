@@ -76,8 +76,8 @@ export function HorizontalProductCard({ product }: HorizontalProductCardProps) {
         {product.category && (
           <div className="absolute top-2 sm:top-3 end-2 sm:end-3 z-10 block sm:hidden">
             <span className="inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-xl
-              bg-white/80 dark:bg-black/60 backdrop-blur-md
-              border border-white/30 dark:border-white/10
+              bg-[var(--color-surface)]/80 backdrop-blur-md
+              border border-[var(--color-border)]
               font-medium text-xs sm:text-sm md:text-base text-[var(--color-text-primary)]
               shadow-lg
               transition-all duration-300
@@ -115,15 +115,15 @@ export function HorizontalProductCard({ product }: HorizontalProductCardProps) {
           {/* Category badge – visible on medium and up, placed next to name */}
           {product.category && (
             <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-xl
-            bg-white/80 dark:bg-black/60 backdrop-blur-md
-            border border-white/30 dark:border-white/10
-            font-medium text-xs sm:text-sm text-[var(--color-text-primary)]
-            shadow-sm
-            transition-all duration-300
-            group-hover:shadow-[0_0_20px_rgba(22,131,199,0.25)]
-            group-hover:scale-105
-            whitespace-nowrap">
-            {product.category}
+              bg-[var(--color-primary-50)]
+              border border-[var(--color-border)]
+              font-medium text-xs sm:text-sm text-[var(--color-primary)]
+              shadow-sm
+              transition-all duration-300
+              group-hover:shadow-[0_0_20px_rgba(22,131,199,0.25)]
+              group-hover:scale-105
+              whitespace-nowrap">
+              {product.category}
             </span>
           )}
         </div>

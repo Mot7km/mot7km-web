@@ -50,16 +50,16 @@ export default function ProductSection({
 
   return (
     <section className="flex flex-col gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
-      {/* Header */}
-      <div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2
-            className="accent-line font-bold text-2xl leading-8 text-[var(--color-text-primary)]"
-            style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}
-          >
-            {sectionTitle}
-          </h2>
-        </div>
+      {/* Header – title + controls on same row on large screens */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
+        <h2
+          className="accent-line font-bold text-2xl leading-8 text-[var(--color-text-primary)]"
+          style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}
+        >
+          {sectionTitle}
+        </h2>
+
+        {/* Controls (count + toggle) – aligned right on mobile, inline on large */}
         <div className="flex items-center gap-3 justify-end">
           {showCount && (
             <span className="badge-count">
@@ -93,7 +93,7 @@ export default function ProductSection({
             >
               <LayoutList size={18} />
             </button>
-        </div>
+          </div>
         </div>
       </div>
 
