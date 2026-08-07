@@ -12,7 +12,7 @@ interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function GridProductCard({ product }: ProductCardProps) {
   const locale = useLocale();
   const href = `/${locale}/${product.id}`;
   const { addToCart, setIsDrawerOpen } = useCart();

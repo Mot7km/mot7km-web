@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { LayoutGrid, LayoutList } from 'lucide-react';
 import { Product } from '@/data/menu';
-import { ProductCard } from '@/components/features/ProductCards';
+import { GridProductCard } from '@/components/features/ProductCards/GridProductCard';
+import { HorizontalProductCard } from '@/components/features/ProductCards/HorizontalProductCard';
 import { ViewMoreButton, ThatsIt } from '@/components/ui/ViewMore';
 
 interface ProductSectionProps {
@@ -23,6 +25,7 @@ export default function ProductSection({
 }: ProductSectionProps) {
   const t = useTranslations();
   const [visibleCount, setVisibleCount] = useState(initialCount);
+  const [layout, setLayout] = useState<'grid' | 'horizontal'>('grid');
   const hasMore = visibleCount < products.length;
   const visibleItems = products.slice(0, visibleCount);
 
@@ -48,31 +51,71 @@ export default function ProductSection({
   return (
     <section className="flex flex-col gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
       {/* Header */}
-      <div className="flex sm:flex-row sm:items-center justify-between gap-2">
-        <h2
-          className="accent-line font-bold text-2xl leading-8 text-[var(--color-text-primary)]"
-          style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}
-        >
-          {sectionTitle}
-        </h2>
-        <div className="flex items-center gap-3">
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2
+            className="accent-line font-bold text-2xl leading-8 text-[var(--color-text-primary)]"
+            style={{ fontFamily: 'var(--font-display), var(--font-inter), system-ui, sans-serif' }}
+          >
+            {sectionTitle}
+          </h2>
+        </div>
+        <div className="flex items-center gap-3 justify-end">
           {showCount && (
             <span className="badge-count">
               {t('productList.countOf', { count: visibleItems.length, total: products.length })}
             </span>
           )}
+
+          {/* Layout Toggle */}
+          <div className="flex items-center rounded-full p-0.5 border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+            <button
+              onClick={() => setLayout('grid')}
+              className={`p-1.5 rounded-full transition-all duration-200 cursor-pointer ${
+                layout === 'grid'
+                  ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(22,131,199,0.3)]'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10'
+              }`}
+              aria-label="Grid view"
+              title="Grid view"
+            >
+              <LayoutGrid size={18} />
+            </button>
+            <button
+              onClick={() => setLayout('horizontal')}
+              className={`p-1.5 rounded-full transition-all duration-200 cursor-pointer ${
+                layout === 'horizontal'
+                  ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(22,131,199,0.3)]'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10'
+              }`}
+              aria-label="Horizontal list view"
+              title="Horizontal list view"
+            >
+              <LayoutList size={18} />
+            </button>
+        </div>
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center">
+      {/* Cards Grid */}
+      <div
+        className={`grid gap-4 justify-items-center ${
+          layout === 'grid'
+            ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+            : 'grid-cols-1'
+        }`}
+      >
         {visibleItems.map((product, index) => (
           <div
             key={product.id}
             className="w-full animate-fade-in-up"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <ProductCard product={product} />
+            {layout === 'grid' ? (
+              <GridProductCard product={product} />
+            ) : (
+              <HorizontalProductCard product={product} />
+            )}
           </div>
         ))}
       </div>
